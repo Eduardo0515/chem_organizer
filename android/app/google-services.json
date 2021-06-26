@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "422318330970",
+    "project_id": "chem-organizer-6e913",
+    "storage_bucket": "chem-organizer-6e913.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:422318330970:android:cfec2bd06153108da0f463",
+        "android_client_info": {
+          "package_name": "com.chem.chem_organizer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "422318330970-mu4rjcadlfo6e76pa0ub36489pdsf3fm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0xORAG8vaIPMgy3w5m-on_xj9zFiJ5Z8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "422318330970-mu4rjcadlfo6e76pa0ub36489pdsf3fm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
