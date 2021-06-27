@@ -1,8 +1,7 @@
-
+import 'package:chem_organizer/src/pages/calendar.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() => new _State();
 }
@@ -130,7 +129,6 @@ class _State extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  
                   Container(
                       height: 50,
                       width: 310,
@@ -164,6 +162,11 @@ class _State extends State<LoginPage> {
                             ),
                             onPressed: () {
                               print("Regístrate");
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CalendarPage()),
+                              );
                             },
                           )
                         ],
