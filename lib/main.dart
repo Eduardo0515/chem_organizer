@@ -1,6 +1,7 @@
 // main.dart
 import 'package:chem_organizer/src/pages/calendar.dart';
 import 'package:chem_organizer/src/pages/login_page.dart';
+import 'package:chem_organizer/src/pages/new_todo.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: CalendarPage(),
+      home: NewToDo(),
     );
   }
 }
