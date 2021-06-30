@@ -1,5 +1,6 @@
 import 'package:chem_organizer/src/pages/calendar.dart';
 import 'package:chem_organizer/src/pages/events.dart';
+import 'package:chem_organizer/src/pages/new_event.dart';
 import 'package:flutter/material.dart';
 
 class MainView extends StatefulWidget {
@@ -21,7 +22,7 @@ class _MainViewState extends State<MainView> {
                 text: "Calendario",
               ),
               Tab(
-                text: "Tareas",
+                text: "Eventos",
               ),
             ],
           ),
@@ -29,9 +30,13 @@ class _MainViewState extends State<MainView> {
         body: TabBarView(children: [CalendarPage(), Events()]),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // Add your onPressed code here!
+            print("object");
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => NewEvent()),
+            );
           },
-          child: const Icon(Icons.add_box),
+          child: const Icon(Icons.add_task_rounded),
           backgroundColor: Colors.blue,
         ),
       ),
