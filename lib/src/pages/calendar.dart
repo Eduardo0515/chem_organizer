@@ -1,7 +1,9 @@
+import 'dart:collection';
+
+import 'package:chem_organizer/src/provider/events_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:chem_organizer/src/provider/calendar_provider.dart';
 
 class CalendarPage extends StatefulWidget {
   @override
@@ -9,19 +11,25 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  late final ValueNotifier<List<String>> _selectedEvents;
+  final eventsController = EventsController();
+  late final ValueNotifier<List<dynamic>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  //Data provider
-  final calendarProvider = new CalendarProvider();
+  LinkedHashMap<DateTime, List<dynamic>> events =
+      LinkedHashMap<DateTime, List<dynamic>>();
+
+  List<dynamic> getEventsForDay(DateTime day) {
+    return events[day] ?? [];
+  }
 
   @override
   void initState() {
     super.initState();
     initializeDateFormatting();
     _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier(calendarProvider.getEventsForDay(_selectedDay!));
+    eventsController.getEvents().then((value) => {events = value});
+    _selectedEvents = ValueNotifier(events[_selectedDay] ?? []);
   }
 
   @override
@@ -48,9 +56,9 @@ class _CalendarPageState extends State<CalendarPage> {
             ) {
               setState(() {
                 _selectedDay = selectedDay;
-                _focusedDay = focusedDay; 
+                _focusedDay = focusedDay;
               });
-              _selectedEvents.value = calendarProvider.getEventsForDay(selectedDay);
+              _selectedEvents.value = getEventsForDay(selectedDay);
             },
             calendarFormat: _calendarFormat,
             onFormatChanged: (format) {
@@ -58,10 +66,10 @@ class _CalendarPageState extends State<CalendarPage> {
                 _calendarFormat = format;
               });
             },
-            eventLoader: calendarProvider.getEventsForDay),
+            eventLoader: getEventsForDay),
         const SizedBox(height: 8.0),
         Expanded(
-          child: ValueListenableBuilder<List<String>>(
+          child: ValueListenableBuilder<List<dynamic>>(
             valueListenable: _selectedEvents,
             builder: (context, value, _) {
               return ListView.builder(
@@ -72,13 +80,17 @@ class _CalendarPageState extends State<CalendarPage> {
                       horizontal: 12.0,
                       vertical: 4.0,
                     ),
-                    decoration: BoxDecoration(
-                      border: Border.all(),
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: ListTile(
-                      onTap: () => print('${value[index]}'),
-                      title: Text('${value[index]}'),
+                    child: Card(
+                      color: Colors.blue[300],
+                      elevation: 5.0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(30.0),
+                              bottomRight: Radius.circular(30.0))),
+                      child: ListTile(
+                        onTap: () => print('${value[index].id}'),
+                        title: Text('${value[index].name}'),
+                      ),
                     ),
                   );
                 },

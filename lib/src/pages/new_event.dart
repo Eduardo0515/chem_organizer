@@ -1,3 +1,4 @@
+import 'package:chem_organizer/src/pages/main_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +63,11 @@ class _NewEventState extends State<NewEvent> {
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                   backgroundColor: Colors.green.shade400,
-                  textColor: Colors.white)
+                  textColor: Colors.white),
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => MainView()),
+              )
             })
         .catchError((error) => {
               Fluttertoast.showToast(
