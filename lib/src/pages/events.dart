@@ -8,14 +8,19 @@ class Events extends StatefulWidget {
   State<StatefulWidget> createState() => new _EventsState();
 }
 
-
 class _EventsState extends State<Events> {
   final eventsController = EventsController();
+  Timestamp time = new Timestamp.fromDate(DateTime.now());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('tarea').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('tarea')
+            .where("fecha", isGreaterThanOrEqualTo: time)
+            .orderBy("fecha")
+            .limit(25)
+            .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(
@@ -38,7 +43,8 @@ class _EventsState extends State<Events> {
                   child: Card(
                     child: ListTile(
                       title: Text(doc.get("nombre")),
-                      subtitle: Text(eventsController.getDate(doc.get("fecha"))),
+                      subtitle:
+                          Text(eventsController.getDate(doc.get("fecha"))),
                     ),
                   ),
                 );

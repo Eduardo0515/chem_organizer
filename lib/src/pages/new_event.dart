@@ -34,7 +34,7 @@ class _NewEventState extends State<NewEvent> {
   void _selectDate(BuildContext context) async {
     final DateTime? newDate = await showDatePicker(
       context: context,
-      initialDate: _date, // Refer step 1
+      initialDate: _date,
       firstDate: DateTime(2000),
       lastDate: DateTime(2025),
       helpText: 'Selecione la fecha',
@@ -46,7 +46,7 @@ class _NewEventState extends State<NewEvent> {
     }
   }
 
-  addUser() {
+  addEvent() {
     DateTime fecha = new DateTime(
         _date.year, _date.month, _date.day, _time.hour, _time.minute);
     FirebaseFirestore.instance
@@ -132,10 +132,12 @@ class _NewEventState extends State<NewEvent> {
                         children: [
                           Text('Hora:'),
                           TextButton(
-                              onPressed: () {
-                                _selectTime();
-                              },
-                              child: new Text("${_time.hour}:${_time.minute}")),
+                            onPressed: () {
+                              _selectTime();
+                            },
+                            //child: new Text("${_time.hour}:${_time.minute}"))
+                            child: new Text("${_time.format(context)}"),
+                          )
                         ],
                       )
                     ],
@@ -209,10 +211,10 @@ class _NewEventState extends State<NewEvent> {
                             if (_selectedCategory == null) {
                               showToast();
                             } else {
-                              addUser();
+                              addEvent();
                             }
                           }
-                        }, //addUser,
+                        },
                         child: Text('Añadir Evento'),
                       )
                     ],
