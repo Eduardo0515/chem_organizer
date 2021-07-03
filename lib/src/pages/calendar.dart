@@ -14,7 +14,7 @@ class _CalendarPageState extends State<CalendarPage> {
   final eventsController = EventsController();
   late final ValueNotifier<List<dynamic>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _focusedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.now().toLocal();
   DateTime? _selectedDay;
   LinkedHashMap<DateTime, List<dynamic>> events =
       LinkedHashMap<DateTime, List<dynamic>>();
@@ -42,32 +42,49 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TableCalendar(
-            locale: 'es_ES',
-            firstDay: DateTime.utc(2000, 01, 01),
-            lastDay: DateTime.utc(2050, 12, 31),
-            focusedDay: _focusedDay,
-            selectedDayPredicate: (day) {
-              return isSameDay(_selectedDay, day);
-            },
-            onDaySelected: (
-              selectedDay,
-              focusedDay,
-            ) {
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-              });
-              _selectedEvents.value = getEventsForDay(selectedDay);
-            },
-            calendarFormat: _calendarFormat,
-            onFormatChanged: (format) {
-              setState(() {
-                _calendarFormat = format;
-              });
-            },
-            eventLoader: getEventsForDay),
-        const SizedBox(height: 8.0),
+        Container(
+          margin: EdgeInsets.all(10.0),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8), color: Colors.blue[300]),
+          child: TableCalendar(
+              locale: 'es_ES',
+              firstDay: DateTime.utc(2000, 01, 01),
+              lastDay: DateTime.utc(2050, 12, 31),
+              focusedDay: _focusedDay,
+              selectedDayPredicate: (day) {
+                return isSameDay(_selectedDay, day);
+              },
+              calendarStyle: CalendarStyle(
+                  todayDecoration: BoxDecoration(
+                    color: Colors.red[400],
+                    shape: BoxShape.circle,
+                  ),
+                  outsideTextStyle: TextStyle(color: Colors.purple)),
+              headerStyle: HeaderStyle(
+                  formatButtonDecoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  headerPadding:
+                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0)),
+              onDaySelected: (
+                selectedDay,
+                focusedDay,
+              ) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
+                _selectedEvents.value = getEventsForDay(selectedDay);
+              },
+              calendarFormat: _calendarFormat,
+              onFormatChanged: (format) {
+                setState(() {
+                  _calendarFormat = format;
+                });
+              },
+              eventLoader: getEventsForDay),
+        ),
         Expanded(
           child: ValueListenableBuilder<List<dynamic>>(
             valueListenable: _selectedEvents,
@@ -81,8 +98,9 @@ class _CalendarPageState extends State<CalendarPage> {
                       vertical: 4.0,
                     ),
                     child: Card(
+                      shadowColor: Colors.orange[300],
                       color: Colors.blue[300],
-                      elevation: 5.0,
+                      elevation: 15.0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(30.0),
@@ -90,6 +108,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       child: ListTile(
                         onTap: () => print('${value[index].id}'),
                         title: Text('${value[index].name}'),
+                        subtitle: Text('${value[index].date}'),
                       ),
                     ),
                   );
