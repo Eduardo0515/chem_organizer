@@ -19,6 +19,7 @@ class _NewEventState extends State<NewEvent> {
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
   var _selectedCategory;
+  int _selectedTimeNotification = 10;
 
   void _selectTime() async {
     final TimeOfDay? newTime = await showTimePicker(
@@ -55,7 +56,8 @@ class _NewEventState extends State<NewEvent> {
         .add({
           'nombre': nameController.text,
           'fecha': fecha,
-          'categoria': _selectedCategory
+          'categoria': _selectedCategory,
+          'tiempoNotificacion': _selectedTimeNotification
         })
         .then((value) => {
               Fluttertoast.showToast(
@@ -96,14 +98,19 @@ class _NewEventState extends State<NewEvent> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(50, 50, 50, 0),
+          padding: EdgeInsets.fromLTRB(25, 25, 25, 0),
           child: Container(
+            padding: EdgeInsets.all(20.0),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text('Nombre del evento:'),
+                  Text(
+                    'Nombre del evento:',
+                    style:
+                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  ),
                   Container(
                     child: TextFormField(
                       validator: (value) {
@@ -119,13 +126,17 @@ class _NewEventState extends State<NewEvent> {
                     ),
                   ),
                   SizedBox(
-                    height: 75,
+                    height: 50,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Column(children: [
-                        Text('Fecha:'),
+                        Text(
+                          'Fecha:',
+                          style: TextStyle(
+                              fontSize: 16.0, fontWeight: FontWeight.bold),
+                        ),
                         TextButton(
                             onPressed: () {
                               _selectDate(context);
@@ -135,7 +146,11 @@ class _NewEventState extends State<NewEvent> {
                       ]),
                       Column(
                         children: [
-                          Text('Hora:'),
+                          Text(
+                            'Hora:',
+                            style: TextStyle(
+                                fontSize: 16.0, fontWeight: FontWeight.bold),
+                          ),
                           TextButton(
                             onPressed: () {
                               _selectTime();
@@ -148,9 +163,13 @@ class _NewEventState extends State<NewEvent> {
                     ],
                   ),
                   SizedBox(
-                    height: 75,
+                    height: 40,
                   ),
-                  Text('Categoria:'),
+                  Text(
+                    'Categoria:',
+                    style:
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -200,16 +219,55 @@ class _NewEventState extends State<NewEvent> {
                     ],
                   ),
                   SizedBox(
-                    height: 100,
+                    height: 50,
+                  ),
+                  Text(
+                    'Notificar minutos antes:',
+                    style:
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                  ),
+                  Center(
+                    child: DropdownButton<int>(
+                      value: _selectedTimeNotification,
+                      icon: const Icon(Icons.arrow_downward),
+                      iconSize: 24,
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.black),
+                      underline: Container(
+                        height: 2,
+                        color: Colors.blue,
+                      ),
+                      onChanged: (int? newValue) {
+                        setState(() {
+                          _selectedTimeNotification = newValue!;
+                        });
+                      },
+                      items: <int>[5, 10, 15, 20]
+                          .map<DropdownMenuItem<int>>((int value) {
+                        return DropdownMenuItem<int>(
+                          value: value,
+                          child: Text(value.toString()),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 60,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
-                        style: TextButton.styleFrom(
-                            primary: Colors.blue,
-                            backgroundColor: Colors.amber.shade100,
-                            padding: EdgeInsets.all(20)),
+                        style: ElevatedButton.styleFrom(
+                          elevation: 10.0,
+                          shadowColor: Colors.blue,
+                          primary: Colors.blue[400],
+                          minimumSize: Size(120, 50),
+                          padding: EdgeInsets.symmetric(horizontal: 12),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                        ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             print("validacion exitosa");
@@ -220,7 +278,10 @@ class _NewEventState extends State<NewEvent> {
                             }
                           }
                         },
-                        child: Text('Añadir Evento'),
+                        child: Text(
+                          'Añadir Evento',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       )
                     ],
                   )

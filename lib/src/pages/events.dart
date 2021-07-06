@@ -1,4 +1,3 @@
-import 'package:chem_organizer/src/custom_view/curved_painter.dart';
 import 'package:chem_organizer/src/provider/events_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +26,18 @@ class _EventsState extends State<Events> {
           if (!snapshot.hasData) {
             return Center(
               child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.data!.docs.isEmpty) {
+            return Center(
+              child: Text(
+                'Sin eventos próximos',
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             );
           } else
             return ListView(

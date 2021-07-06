@@ -10,9 +10,14 @@ class EventsController {
 
   getDate(Timestamp time) {
     DateTime fecha = time.toDate();
-    String formattedDate = DateFormat('yyyy-MM-dd – h:mma').format(fecha);
+    String formattedDate = DateFormat.yMd().add_jm().format(fecha);
     return formattedDate;
     //return "Fecha:${fecha.year}-${fecha.month}-${fecha.day}  Hora: ${fecha.hour}: ${fecha.minute}";
+  }
+
+  getDateFromDateTime(DateTime date) {
+    String formattedDate = DateFormat.yMd().add_jm().format(date);
+    return formattedDate;
   }
 
   Future<void> deleteEvent(String id) {
