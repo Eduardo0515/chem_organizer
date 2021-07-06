@@ -1,4 +1,8 @@
+import 'package:chem_organizer/src/models/categoryEvent.dart';
+import 'package:chem_organizer/src/pages/edit_category.dart';
 import 'package:chem_organizer/src/pages/main_view.dart';
+import 'package:chem_organizer/src/pages/new_category.dart';
+import 'package:chem_organizer/src/provider/categories_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -140,7 +144,6 @@ class _NewEventState extends State<NewEvent> {
                             onPressed: () {
                               _selectTime();
                             },
-                            //child: new Text("${_time.hour}:${_time.minute}"))
                             child: new Text("${_time.format(context)}"),
                           )
                         ],
@@ -179,10 +182,9 @@ class _NewEventState extends State<NewEvent> {
                                   ),
                                 );
                               }
-                              return DropdownButton(
+                              var dropdownButton = DropdownButton(
                                 items: items,
                                 onChanged: (newValue) {
-                                  //print("----------------${currencyValue}");
                                   setState(() {
                                     _selectedCategory = newValue;
                                   });
@@ -191,12 +193,27 @@ class _NewEventState extends State<NewEvent> {
                                 isExpanded: false,
                                 hint: Text("Selecionar Categoria"),
                               );
+                              return dropdownButton;
                             }
                           }),
-                      TextButton(
-                        onPressed: () {},
-                        child: Text("Añadir otra"),
-                      )
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        children: <Widget>[
+                          _editButton(context),
+                          TextButton(
+                            child: Text("Añadir otra"),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => NewCategory()),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -231,5 +248,28 @@ class _NewEventState extends State<NewEvent> {
         ),
       ),
     );
+  }
+
+  _editButton(BuildContext context) {
+    if (_selectedCategory != null && _selectedCategory != '0001') {
+      return TextButton(
+          child: Text("Editar"),
+          onPressed: () {
+            CategoriesController()
+                .getCategory(_selectedCategory)
+                .then((value) => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditCategory(category: value),
+                        ),
+                      )
+                    });
+          });
+    } else {
+      return SizedBox(
+        height: 10,
+      );
+    }
   }
 }
