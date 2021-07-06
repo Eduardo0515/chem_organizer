@@ -108,7 +108,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       child: ListTile(
                         onTap: () => print('${value[index].id}'),
                         title: Text('${value[index].name}'),
-                        subtitle: Text('${value[index].date}'),
+                        subtitle: Text(eventsController.getDateFromDateTime(value[index].date)),
                       ),
                     ),
                   );
