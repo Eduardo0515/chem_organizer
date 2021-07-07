@@ -78,7 +78,7 @@ class _EventsState extends State<Events> {
                               ],
                             ));
                   },
-                  background: Container(color: Colors.teal[100]),
+                  background: Container(color: Colors.teal[100], child: Icon(Icons.delete, size:35.0,)),
                   child: Card(
                       child: Row(
                     children: [
