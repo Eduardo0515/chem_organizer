@@ -52,6 +52,23 @@ class _EventsState extends State<Events> {
                           });
                     });
                   },
+                  confirmDismiss: (_) {
+                    return showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              title: Text("Eliminar evento"),
+                              content:
+                                  Text("¿Está seguro de eliminar el evento?"),
+                              actions: [
+                                TextButton(onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                }, child: Text("Cancelar")),
+                                TextButton(onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                }, child: Text("Aceptar")),
+                              ],
+                            ));
+                  },
                   background: Container(color: Colors.teal[100]),
                   child: Card(
                       color: Colors.blue[300],
