@@ -1,4 +1,6 @@
 // main.dart
+import 'dart:ui';
+
 import 'package:chem_organizer/src/pages/login_page.dart';
 import 'package:chem_organizer/src/pages/main_view.dart';
 import 'package:chem_organizer/src/pages/message_view.dart';
@@ -39,24 +41,58 @@ class _MyAppState extends State<MyApp> {
       title: 'Flutter Demo',
       initialRoute: 'home',
       navigatorKey: navigatorKey,
-      //scaffoldMessengerKey: ,
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primaryColor: Colors.blueGrey.shade50,
+        accentColor: Colors.deepPurpleAccent.shade100,
+        errorColor: Colors.amber,
+        dialogTheme: DialogTheme(),
+        appBarTheme: AppBarTheme(
+          elevation: 0,
+          brightness: Brightness.dark,
+          titleSpacing: 10,
+          backgroundColor: Color.fromRGBO(133, 45, 145, 1.0),
+        ),
+        cardTheme: CardTheme(
+          color: Color.fromRGBO(178, 91, 165, 1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30.0),
+                bottomRight: Radius.circular(30.0)),
+          ),
+          elevation: 4,
+          margin: EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+        ),
+        timePickerTheme: TimePickerThemeData(
+          helpTextStyle: TextStyle(color: Colors.white70),
+          backgroundColor: Colors.purple.shade400,
+          dialHandColor: Colors.amber.shade500,
+        ),
+        textTheme: TextTheme(
+          headline1: TextStyle(
+              height: 3,
+              fontSize: 30.0,
+              fontFamily: 'RobotoMono',
+              fontWeight: FontWeight.w500,
+              color: Colors.white70),
+          headline2: TextStyle(
+              height: 3,
+              fontSize: 28.0,
+              fontFamily: 'RobotoMono',
+              fontWeight: FontWeight.w500,
+              color: Colors.white70),
+          headline3: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.amber.shade400),
+          bodyText1: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+      ),
       routes: {
         'home': (_) => MainView(),
         'message': (_) => MessageView(),
       },
-      // theme: ThemeData(
-      //   // This is the theme of your application.
-      //   //
-      //   // Try running your application with "flutter run". You'll see the
-      //   // application has a blue toolbar. Then, without quitting the app, try
-      //   // changing the primarySwatch below to Colors.green and then invoke
-      //   // "hot reload" (press "r" in the console where you ran "flutter run",
-      //   // or simply save your changes to "hot reload" in a Flutter IDE).
-      //   // Notice that the counter didn't reset back to zero; the application
-      //   // is not restarted.
-      //   primarySwatch: Colors.blue,
-      // ),
-      // home: MainView(),
     );
   }
 }

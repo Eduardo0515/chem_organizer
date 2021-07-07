@@ -76,19 +76,45 @@ class _NewCategoryState extends State<NewCategory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Nueva Categoría'),
+        toolbarHeight: 80,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_rounded,
+            color: Colors.white,
+            size: 30,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text('Nueva Categoría',
+            style: Theme.of(context).textTheme.headline2),
       ),
       body: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromRGBO(133, 45, 145, 1.0),
+              Color.fromRGBO(49, 42, 108, 1.0),
+            ],
+          )),
           padding: EdgeInsets.all(50),
           child: Form(
             key: _formKey,
             child: Column(
               children: <Widget>[
-                Text('Nombre'),
+                Text(
+                  'Nombre',
+                  style: Theme.of(context).textTheme.headline3,
+                ),
                 TextFormField(
                   controller: _categoryController,
+                  style: Theme.of(context).textTheme.bodyText1,
                   decoration: InputDecoration(
                     hintText: 'Categoría',
+                    hintStyle: TextStyle(color: Colors.white60),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -106,13 +132,25 @@ class _NewCategoryState extends State<NewCategory> {
                     return null;
                   },
                 ),
+                SizedBox(
+                  height: 50,
+                ),
                 TextButton(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 5,
+                    primary: Colors.pink.shade400,
+                    minimumSize: Size(120, 50),
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    ),
+                  ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       existCategory();
                     }
                   },
-                  child: Text('Guardar'),
+                  child: Text('Guardar', style: TextStyle(color: Colors.white)),
                 )
               ],
             ),

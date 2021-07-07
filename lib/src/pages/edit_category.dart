@@ -53,19 +53,47 @@ class EditCategory extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Editar Categoría'),
+        toolbarHeight: 80,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_rounded,
+            color: Colors.white,
+            size: 30,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          'Editar Categoría',
+          style: Theme.of(context).textTheme.headline2,
+        ),
       ),
       body: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromRGBO(133, 45, 145, 1.0),
+              Color.fromRGBO(49, 42, 108, 1.0),
+            ],
+          )),
           padding: EdgeInsets.all(50),
           child: Form(
             key: _formKey,
             child: Column(
               children: <Widget>[
-                Text('Nombre'),
+                Text(
+                  'Nombre',
+                  style: Theme.of(context).textTheme.headline3,
+                ),
                 TextFormField(
                   controller: _categoryController,
+                  style: Theme.of(context).textTheme.bodyText1,
                   decoration: InputDecoration(
                     hintText: 'Categoría',
+                    hintStyle: TextStyle(color: Colors.white60),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -80,33 +108,50 @@ class EditCategory extends StatelessWidget {
                     return null;
                   },
                 ),
-                Row(children: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      _showDialogAlert().whenComplete(() => {
-                            Navigator.pop(context),
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => NewEvent()),
-                            )
-                          });
-                    },
-                    child: Text('Eliminar'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      CategoriesController()
-                          .updateCategory(category.id, _categoryController.text)
-                          .then((value) => {
-                                Navigator.pop(
+                SizedBox(
+                  height: 50,
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          _showDialogAlert().whenComplete(() => {
+                                Navigator.pop(context),
+                                Navigator.pushReplacement(
                                   context,
+                                  MaterialPageRoute(
+                                      builder: (context) => NewEvent()),
                                 )
                               });
-                    },
-                    child: Text('Actualizar'),
-                  ),
-                ]),
+                        },
+                        child: Text(
+                          'Eliminar',
+                          style: TextStyle(
+                            color: Colors.pink.shade200,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          CategoriesController()
+                              .updateCategory(
+                                  category.id, _categoryController.text)
+                              .then((value) => {
+                                    Navigator.pop(
+                                      context,
+                                    )
+                                  });
+                        },
+                        child: Text(
+                          'Actualizar',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                    ]),
               ],
             ),
           )),

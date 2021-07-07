@@ -15,8 +15,19 @@ class _MainViewState extends State<MainView> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Principal"),
+          toolbarHeight: 125,
+          title: Container(
+              padding: EdgeInsets.all(20),
+              child: Text(
+                "Chem Organizer",
+                style: Theme.of(context).textTheme.headline1,
+              )),
           bottom: TabBar(
+            indicatorColor: Colors.purple.shade300,
+            labelColor: Colors.amber.shade300,
+            labelStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            unselectedLabelStyle: TextStyle(fontSize: 13),
+            unselectedLabelColor: Colors.white60,
             tabs: [
               Tab(
                 text: "Calendario",
@@ -37,7 +48,7 @@ class _MainViewState extends State<MainView> {
             );
           },
           child: const Icon(Icons.add_task_rounded),
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.amber.shade700,
         ),
       ),
     );

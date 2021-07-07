@@ -97,218 +97,245 @@ class _NewEventState extends State<NewEvent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Añadir Nuevo evento'),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(25, 25, 25, 0),
-          child: Container(
-            padding: EdgeInsets.all(20.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Nombre del evento:',
-                    style:
-                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                  ),
-                  Container(
-                    child: TextFormField(
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Campo vacío';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Evento',
-                      ),
-                      controller: nameController,
+        backgroundColor: Color.fromRGBO(49, 42, 108, 1.0),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_rounded,
+              color: Colors.white,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: Text(
+            'Añadir Nuevo evento',
+            style: Theme.of(context).textTheme.headline2,
+          ),
+        ),
+        body: Container(
+          padding: EdgeInsets.all(25),
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromRGBO(133, 45, 145, 1.0),
+              Color.fromRGBO(49, 42, 108, 1.0),
+            ],
+          )),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Text(
+                      'Nombre del evento:',
+                      style: Theme.of(context).textTheme.headline3,
                     ),
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Column(children: [
-                        Text(
-                          'Fecha:',
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold),
-                        ),
-                        TextButton(
-                            onPressed: () {
-                              _selectDate(context);
-                            },
-                            child:
-                                new Text("${_date.toLocal()}".split(' ')[0])),
-                      ]),
-                      Column(
-                        children: [
-                          Text(
-                            'Hora:',
-                            style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              _selectTime();
-                            },
-                            child: new Text("${_time.format(context)}"),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  Text(
-                    'Categoria:',
-                    style:
-                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 10,
-                      ),
-                      StreamBuilder<QuerySnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection("categories")
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData)
-                              return Text("Loading.....");
-                            else {
-                              List<DropdownMenuItem<String>> items = [];
-                              for (int i = 0;
-                                  i < snapshot.data!.docs.length;
-                                  i++) {
-                                DocumentSnapshot snap = snapshot.data!.docs[i];
-                                items.add(
-                                  DropdownMenuItem(
-                                    child: Text(
-                                      snap.get("category"),
-                                    ),
-                                    value: "${snap.id}",
-                                  ),
-                                );
-                              }
-                              var dropdownButton = DropdownButton(
-                                items: items,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedCategory = newValue;
-                                  });
-                                },
-                                value: _selectedCategory,
-                                isExpanded: false,
-                                hint: Text("Selecionar Categoria"),
-                              );
-                              return dropdownButton;
-                            }
-                          }),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Column(
-                        children: <Widget>[
-                          _editButton(context),
-                          TextButton(
-                            child: Text("Añadir otra"),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => NewCategory()),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Text(
-                    'Notificar minutos antes:',
-                    style:
-                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                  ),
-                  Center(
-                    child: DropdownButton<int>(
-                      value: _selectedTimeNotification,
-                      icon: const Icon(Icons.arrow_downward),
-                      iconSize: 24,
-                      elevation: 16,
-                      style: const TextStyle(color: Colors.black),
-                      underline: Container(
-                        height: 2,
-                        color: Colors.blue,
-                      ),
-                      onChanged: (int? newValue) {
-                        setState(() {
-                          _selectedTimeNotification = newValue!;
-                        });
-                      },
-                      items: <int>[5, 10, 15, 20]
-                          .map<DropdownMenuItem<int>>((int value) {
-                        return DropdownMenuItem<int>(
-                          value: value,
-                          child: Text(value.toString()),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 60,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 10.0,
-                          shadowColor: Colors.blue,
-                          primary: Colors.blue[400],
-                          minimumSize: Size(120, 50),
-                          padding: EdgeInsets.symmetric(horizontal: 12),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                        ),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            print("validacion exitosa");
-                            if (_selectedCategory == null) {
-                              showToast();
-                            } else {
-                              addEvent();
-                            }
+                    Container(
+                      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Campo vacío';
                           }
+                          return null;
                         },
-                        child: Text(
-                          'Añadir Evento',
-                          style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: 'Evento',
+                          hintStyle: TextStyle(color: Colors.white60),
                         ),
-                      )
-                    ],
-                  )
-                ],
+                        controller: nameController,
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(children: [
+                          Text(
+                            'Fecha:',
+                            style: Theme.of(context).textTheme.headline3,
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                _selectDate(context);
+                              },
+                              child: new Text(
+                                "${_date.toLocal()}".split(' ')[0],
+                                style: Theme.of(context).textTheme.bodyText1,
+                              )),
+                        ]),
+                        Column(
+                          children: [
+                            Text(
+                              'Hora:',
+                              style: Theme.of(context).textTheme.headline3,
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                _selectTime();
+                              },
+                              child: new Text(
+                                "${_time.format(context)}",
+                                style: Theme.of(context).textTheme.bodyText1,
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    Text(
+                      'Categoria:',
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection("categories")
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData)
+                                return Text("Loading.....");
+                              else {
+                                List<DropdownMenuItem<String>> items = [];
+                                for (int i = 0;
+                                    i < snapshot.data!.docs.length;
+                                    i++) {
+                                  DocumentSnapshot snap =
+                                      snapshot.data!.docs[i];
+                                  items.add(
+                                    DropdownMenuItem(
+                                      child: Text(
+                                        snap.get("category"),
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      value: "${snap.id}",
+                                    ),
+                                  );
+                                }
+                                var dropdownButton = DropdownButton(
+                                  items: items,
+                                  dropdownColor:
+                                      Color.fromRGBO(133, 45, 145, 1.0),
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      _selectedCategory = newValue;
+                                    });
+                                  },
+                                  value: _selectedCategory,
+                                  isExpanded: false,
+                                  hint: Text("Selecionar Categoria",
+                                      style: TextStyle(color: Colors.white60)),
+                                );
+                                return dropdownButton;
+                              }
+                            }),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          children: <Widget>[
+                            _editButton(context),
+                            TextButton(
+                              child: Text("Añadir otra"),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => NewCategory()),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    Text(
+                      'Notificar minutos antes:',
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
+                    Center(
+                      child: DropdownButton<int>(
+                        value: _selectedTimeNotification,
+                        icon: const Icon(
+                          Icons.timer,
+                          color: Colors.white,
+                        ),
+                        iconSize: 20,
+                        elevation: 5,
+                        dropdownColor: Color.fromRGBO(133, 45, 145, 1.0),
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        onChanged: (int? newValue) {
+                          setState(() {
+                            _selectedTimeNotification = newValue!;
+                          });
+                        },
+                        items: <int>[5, 10, 15, 20]
+                            .map<DropdownMenuItem<int>>((int value) {
+                          return DropdownMenuItem<int>(
+                            value: value,
+                            child: Text(value.toString()),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 60,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 5,
+                            primary: Colors.pink.shade400,
+                            minimumSize: Size(120, 50),
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                            ),
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              print("validacion exitosa");
+                              if (_selectedCategory == null) {
+                                showToast();
+                              } else {
+                                addEvent();
+                              }
+                            }
+                          },
+                          child: Text(
+                            'Añadir Evento',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   _editButton(BuildContext context) {
