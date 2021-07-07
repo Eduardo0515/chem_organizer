@@ -11,7 +11,7 @@ class NewCategory extends StatefulWidget {
 
 class _NewCategoryState extends State<NewCategory> {
   CollectionReference categories =
-      FirebaseFirestore.instance.collection('categories');
+      FirebaseFirestore.instance.collection('usuarios').doc('hugo').collection('categories');
 
   final _formKey = GlobalKey<FormState>();
   bool _exist = false;

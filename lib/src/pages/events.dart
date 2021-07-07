@@ -26,7 +26,9 @@ class _EventsState extends State<Events> {
       )),
       child: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('tarea')
+            .collection('usuarios')
+            .doc('hugo')
+            .collection('eventos')
             .where("fecha", isGreaterThanOrEqualTo: time)
             .orderBy("fecha")
             .limit(25)
@@ -69,16 +71,25 @@ class _EventsState extends State<Events> {
                               content:
                                   Text("¿Está seguro de eliminar el evento?"),
                               actions: [
-                                TextButton(onPressed: () {
-                                  Navigator.of(context).pop(false);
-                                }, child: Text("Cancelar")),
-                                TextButton(onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                }, child: Text("Aceptar")),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(false);
+                                    },
+                                    child: Text("Cancelar")),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(true);
+                                    },
+                                    child: Text("Aceptar")),
                               ],
                             ));
                   },
-                  background: Container(color: Colors.teal[100], child: Icon(Icons.delete, size:35.0,)),
+                  background: Container(
+                      color: Colors.teal[100],
+                      child: Icon(
+                        Icons.delete,
+                        size: 35.0,
+                      )),
                   child: Card(
                       child: Row(
                     children: [

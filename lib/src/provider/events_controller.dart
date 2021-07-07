@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class EventsController {
-  CollectionReference tareas = FirebaseFirestore.instance.collection('tarea');
+  CollectionReference tareas = FirebaseFirestore.instance.collection('usuarios').doc('hugo').collection('eventos');
 
   getDate(Timestamp time) {
     DateTime fecha = time.toDate();

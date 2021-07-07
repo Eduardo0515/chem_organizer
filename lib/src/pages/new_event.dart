@@ -56,7 +56,9 @@ class _NewEventState extends State<NewEvent> {
     DateTime fecha = new DateTime(
         _date.year, _date.month, _date.day, _time.hour, _time.minute);
     FirebaseFirestore.instance
-        .collection('tarea')
+        .collection('usuarios')
+        .doc('hugo')
+        .collection('eventos')
         .add({
           'nombre': nameController.text,
           'fecha': fecha,
@@ -205,7 +207,7 @@ class _NewEventState extends State<NewEvent> {
                       children: [
                         StreamBuilder<QuerySnapshot>(
                             stream: FirebaseFirestore.instance
-                                .collection("categories")
+                                .collection("usuarios").doc('hugo').collection('categories')
                                 .snapshots(),
                             builder: (context, snapshot) {
                               if (!snapshot.hasData)
