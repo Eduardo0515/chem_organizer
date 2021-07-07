@@ -14,8 +14,17 @@ class _EventsState extends State<Events> {
   @override
   Widget build(BuildContext context) {
     eventsController.getEvents();
-    return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
+    return Container(
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Color.fromRGBO(133, 45, 145, 1.0),
+          Color.fromRGBO(49, 42, 108, 1.0),
+        ],
+      )),
+      child: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('tarea')
             .where("fecha", isGreaterThanOrEqualTo: time)
@@ -71,35 +80,30 @@ class _EventsState extends State<Events> {
                   },
                   background: Container(color: Colors.teal[100]),
                   child: Card(
-                      color: Colors.blue[300],
-                      shadowColor: Colors.orange[300],
-                      margin: EdgeInsets.symmetric(
-                          horizontal: 10.0, vertical: 10.0),
-                      elevation: 15.0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(30.0),
-                              bottomRight: Radius.circular(30.0))),
                       child: Row(
-                        children: [
-                          Expanded(
-                            child: ListTile(
-                              title: Text(doc.get("nombre"),
-                                  style: TextStyle(color: Colors.white)),
-                              subtitle: Text(
-                                  eventsController.getDate(doc.get("fecha")),
-                                  style: TextStyle(color: Colors.white)),
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(15.0),
-                            child: Text(
-                              "Categoria",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      )),
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.fromLTRB(30, 0, 10, 3),
+                          title: Text(doc.get("nombre"),
+                              style: Theme.of(context).textTheme.bodyText1),
+                          subtitle:
+                              Text(eventsController.getDate(doc.get("fecha")),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    height: 1.7,
+                                  )),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(15.0),
+                        child: Text(
+                          "Categoria",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  )),
                 );
               }).toList(),
             );

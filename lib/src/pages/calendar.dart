@@ -40,84 +40,101 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          margin: EdgeInsets.all(10.0),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8), color: Colors.blue[300]),
-          child: TableCalendar(
-              locale: 'es_ES',
-              firstDay: DateTime.utc(2000, 01, 01),
-              lastDay: DateTime.utc(2050, 12, 31),
-              focusedDay: _focusedDay,
-              selectedDayPredicate: (day) {
-                return isSameDay(_selectedDay, day);
-              },
-              calendarStyle: CalendarStyle(
-                  todayDecoration: BoxDecoration(
-                    color: Colors.red[400],
-                    shape: BoxShape.circle,
-                  ),
-                  outsideTextStyle: TextStyle(color: Colors.purple)),
-              headerStyle: HeaderStyle(
+    return Container(
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Color.fromRGBO(133, 45, 145, 1.0),
+          Color.fromRGBO(49, 42, 108, 1.0),
+        ],
+      )),
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.fromLTRB(10, 15, 10, 0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Color.fromRGBO(209, 204, 210, 1.0),
+            ),
+            child: TableCalendar(
+                locale: 'es_ES',
+                firstDay: DateTime.utc(2000, 01, 01),
+                lastDay: DateTime.utc(2050, 12, 31),
+                focusedDay: _focusedDay,
+                selectedDayPredicate: (day) {
+                  return isSameDay(_selectedDay, day);
+                },
+                calendarStyle: CalendarStyle(
+                    markerDecoration: BoxDecoration(
+                      color: Colors.pink.shade300,
+                      shape: BoxShape.circle,
+                    ),
+                    todayDecoration: BoxDecoration(
+                      color: Colors.amber.shade700,
+                      shape: BoxShape.circle,
+                    ),
+                    outsideTextStyle: TextStyle(color: Colors.purple)),
+                headerStyle: HeaderStyle(
                   formatButtonDecoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.deepPurpleAccent.shade100,
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   headerPadding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0)),
-              onDaySelected: (
-                selectedDay,
-                focusedDay,
-              ) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-                _selectedEvents.value = getEventsForDay(selectedDay);
-              },
-              calendarFormat: _calendarFormat,
-              onFormatChanged: (format) {
-                setState(() {
-                  _calendarFormat = format;
-                });
-              },
-              eventLoader: getEventsForDay),
-        ),
-        Expanded(
-          child: ValueListenableBuilder<List<dynamic>>(
-            valueListenable: _selectedEvents,
-            builder: (context, value, _) {
-              return ListView.builder(
-                itemCount: value.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 12.0,
-                      vertical: 4.0,
-                    ),
-                    child: Card(
-                      shadowColor: Colors.orange[300],
-                      color: Colors.blue[300],
-                      elevation: 15.0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(30.0),
-                              bottomRight: Radius.circular(30.0))),
-                      child: ListTile(
-                        onTap: () => print('${value[index].id}'),
-                        title: Text('${value[index].name}'),
-                        subtitle: Text(eventsController.getDateFromDateTime(value[index].date)),
-                      ),
-                    ),
-                  );
+                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                ),
+                onDaySelected: (
+                  selectedDay,
+                  focusedDay,
+                ) {
+                  setState(() {
+                    _selectedDay = selectedDay;
+                    _focusedDay = focusedDay;
+                  });
+                  _selectedEvents.value = getEventsForDay(selectedDay);
                 },
-              );
-            },
+                calendarFormat: _calendarFormat,
+                onFormatChanged: (format) {
+                  setState(() {
+                    _calendarFormat = format;
+                  });
+                },
+                eventLoader: getEventsForDay),
           ),
-        ),
-      ],
+          Expanded(
+            child: ValueListenableBuilder<List<dynamic>>(
+              valueListenable: _selectedEvents,
+              builder: (context, value, _) {
+                return ListView.builder(
+                  itemCount: value.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      child: Card(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.fromLTRB(45, 0, 55, 0),
+                          onTap: () => print('${value[index].id}'),
+                          title: Text(
+                            '${value[index].name}',
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                          subtitle: Text(
+                            eventsController
+                                .getDateFromDateTime(value[index].date),
+                            style:
+                                TextStyle(height: 1.5, color: Colors.white70),
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

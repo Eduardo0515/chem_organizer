@@ -2,5 +2,5 @@ class CategoryEvent {
   String id;
   String category;
 
-  CategoryEvent({required this.id, required this.category});
+  CategoryEvent(this.id, this.category);
 }
