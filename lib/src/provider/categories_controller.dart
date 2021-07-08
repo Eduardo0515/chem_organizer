@@ -2,8 +2,10 @@ import 'package:chem_organizer/src/models/categoryEvent.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CategoriesController {
-  CollectionReference categories =
-      FirebaseFirestore.instance.collection('usuarios').doc('hugo').collection('categories');
+  CollectionReference categories = FirebaseFirestore.instance
+      .collection('usuarios')
+      .doc('hugo')
+      .collection('categories');
 
   checkCategory(category) {
     return categories
@@ -34,7 +36,10 @@ class CategoriesController {
   }
 
   Future deleteCategory(idCategory) async {
-    CollectionReference tareas = FirebaseFirestore.instance.collection('usuarios').doc('hugo').collection('eventos');
+    CollectionReference tareas = FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc('hugo')
+        .collection('eventos');
     return tareas
         .where('categoria', isEqualTo: idCategory)
         .get()
