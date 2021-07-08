@@ -1,3 +1,5 @@
+import 'package:chem_organizer/src/pages/edit_event.dart';
+import 'package:chem_organizer/src/pages/info_event.dart';
 import 'package:chem_organizer/src/provider/events_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -106,6 +108,28 @@ class _EventsState extends State<Events> {
                                   )),
                         ),
                       ),
+                      IconButton(
+                        icon: const Icon(Icons.remove_red_eye),
+                        onPressed: () {
+                        Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => InfoEvent(
+                                )),
+                              );
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                        Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditEvent(
+                                )),
+                              );
+                        },
+                      ),
                       Container(
                         padding: EdgeInsets.all(15.0),
                         child: Text(
@@ -113,8 +137,10 @@ class _EventsState extends State<Events> {
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
+                    
                     ],
-                  )),
+                  )
+                ),
                 );
               }).toList(),
             );
