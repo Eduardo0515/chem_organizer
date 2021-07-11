@@ -2,6 +2,12 @@ import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+
+FlutterLocalNotificationsPlugin notificationsPlugin =
+    new FlutterLocalNotificationsPlugin();
 
 class PushNotificationsServices {
   static FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -37,6 +43,31 @@ class PushNotificationsServices {
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenAppHandler);
 
     //local notifications
+    var initializeAndroid = AndroidInitializationSettings('cheems');
+    var initializationSettings =
+        InitializationSettings(android: initializeAndroid);
+    notificationsPlugin.initialize(initializationSettings);
+    tz.initializeTimeZones();
+  }
+
+  Future<void> displayNotification(
+    int id,
+    String title,
+    String body,
+  ) async {
+    notificationsPlugin.zonedSchedule(
+        id,
+        title,
+        body,
+        tz.TZDateTime.now(tz.local).add(
+          Duration(seconds: 3),
+        ),
+        NotificationDetails(
+            android: AndroidNotificationDetails(
+                'channelId', 'channelName', 'channelDescription')),
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        androidAllowWhileIdle: true);
   }
 
   static closeStreams() {

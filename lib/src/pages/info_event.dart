@@ -207,7 +207,9 @@ class _InfoEventState extends State<InfoEvent> {
                       children: [
                         StreamBuilder<QuerySnapshot>(
                             stream: FirebaseFirestore.instance
-                                .collection("usuarios").doc('hugo').collection('categories')
+                                .collection("usuarios")
+                                .doc('hugo')
+                                .collection('categories')
                                 .snapshots(),
                             builder: (context, snapshot) {
                               if (!snapshot.hasData)
@@ -249,7 +251,6 @@ class _InfoEventState extends State<InfoEvent> {
                         SizedBox(
                           width: 10,
                         ),
-                        
                       ],
                     ),
                     SizedBox(
@@ -287,7 +288,6 @@ class _InfoEventState extends State<InfoEvent> {
                     SizedBox(
                       height: 60,
                     ),
-                    
                   ],
                 ),
               ),
