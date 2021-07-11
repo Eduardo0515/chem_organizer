@@ -2,28 +2,54 @@ import 'package:chem_organizer/src/models/categoryEvent.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CategoriesController {
-  CollectionReference categories =
-      FirebaseFirestore.instance.collection('usuarios').doc('hugo').collection('categories');
+  String username;
+
+  CategoriesController(this.username);
+
+  getCategories() async {
+    return FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(username)
+        .collection('categories')
+        .snapshots();
+  }
 
   checkCategory(category) {
-    return categories
-        .where('category', isEqualTo: category.toUpperCase())
-        .get();
+    return FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(username)
+        .collection('categories')
+        .where('category', isEqualTo: category.toUpperCase());
   }
 
   addCategory(category) {
-    categories.add({'category': category.text.toUpperCase()});
+    FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(username)
+        .collection('categories')
+        .add({'category': category.text.toUpperCase()});
   }
 
   Future updateCategory(idCategory, category) async {
-    return categories
+    return FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(username)
+        .collection('categories')
         .doc(idCategory)
         .update({'category': category.toUpperCase()});
   }
 
-  Future<CategoryEvent> getCategory(idCategory) async {
-    final category = await categories.doc(idCategory).get();
-    return new CategoryEvent(category.id, category.get('category'));
+  Future<CategoryEvent?> getCategory(idCategory) async {
+    final category = await FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(username)
+        .collection('categories')
+        .doc(idCategory)
+        .get();
+    if (category.exists)
+      return new CategoryEvent(category.id, category.get('category'));
+    else
+      return null;
   }
 
   String checkName(category) {
@@ -34,7 +60,10 @@ class CategoriesController {
   }
 
   Future deleteCategory(idCategory) async {
-    CollectionReference tareas = FirebaseFirestore.instance.collection('usuarios').doc('hugo').collection('eventos');
+    CollectionReference tareas = FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(username)
+        .collection('eventos');
     return tareas
         .where('categoria', isEqualTo: idCategory)
         .get()
@@ -44,6 +73,13 @@ class CategoriesController {
                 tareas.doc(element.id).update({'categoria': '0001'});
               })
             })
-        .then((value) => {categories.doc(idCategory).delete()});
+        .then((value) => {
+              FirebaseFirestore.instance
+                  .collection('usuarios')
+                  .doc(username)
+                  .collection('categories')
+                  .doc(idCategory)
+                  .delete()
+            });
   }
 }

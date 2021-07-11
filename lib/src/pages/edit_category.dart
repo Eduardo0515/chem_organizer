@@ -6,12 +6,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class EditCategory extends StatelessWidget {
   final category;
-
-  const EditCategory({Key? key, @required this.category}) : super(key: key);
+  final String user;
+  const EditCategory({Key? key, @required this.category, required this.user})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
+
+    CategoriesController categoriesController =
+        new CategoriesController(this.user);
 
     TextEditingController _categoryController = TextEditingController();
     _categoryController.text = category.category;
@@ -37,7 +41,7 @@ class EditCategory extends StatelessWidget {
                 child: const Text('Aceptar'),
                 onPressed: () {
                   Navigator.pop(context);
-                  CategoriesController().deleteCategory(category.id);
+                  categoriesController.deleteCategory(category.id);
                 },
               ),
               TextButton(
@@ -99,7 +103,7 @@ class EditCategory extends StatelessWidget {
                     if (value!.isEmpty) {
                       return 'Campo vacío';
                     } else {
-                      value = CategoriesController().checkName(value);
+                      value = categoriesController.checkName(value);
                       _categoryController.text = value;
                       if (value.length < 3) {
                         return 'Nombre inválido';
@@ -121,7 +125,9 @@ class EditCategory extends StatelessWidget {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => NewEvent()),
+                                      builder: (context) => NewEvent(
+                                            user: this.user,
+                                          )),
                                 )
                               });
                         },
@@ -135,7 +141,7 @@ class EditCategory extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          CategoriesController()
+                          categoriesController
                               .updateCategory(
                                   category.id, _categoryController.text)
                               .then((value) => {

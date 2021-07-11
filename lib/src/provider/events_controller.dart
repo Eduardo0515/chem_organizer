@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class EventsController {
-  CollectionReference tareas = FirebaseFirestore.instance.collection('usuarios').doc('hugo').collection('eventos');
+  CollectionReference users = FirebaseFirestore.instance.collection('usuarios');
 
   getDate(Timestamp time) {
     DateTime fecha = time.toDate();
@@ -20,8 +20,10 @@ class EventsController {
     return formattedDate;
   }
 
-  Future<void> deleteEvent(String id) {
-    return tareas
+  Future<void> deleteEvent(String id, String username) {
+    return users
+        .doc(username)
+        .collection('eventos')
         .doc(id)
         .delete()
         .then((value) => print("Event Deleted"))
@@ -32,11 +34,16 @@ class EventsController {
     return DateTime(date.year, date.month, date.day);
   }
 
-  Future<LinkedHashMap<DateTime, List<dynamic>>> getEvents() async {
+  Future<LinkedHashMap<DateTime, List<dynamic>>> getEvents(
+      String username) async {
     Map<DateTime, List<dynamic>> auxEvents = Map();
     Timestamp t;
     DateTime date;
-    await tareas.get().then((QuerySnapshot querySnapshot) {
+    await users
+        .doc(username)
+        .collection('eventos')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         t = doc['fecha'];
         date = t.toDate();
