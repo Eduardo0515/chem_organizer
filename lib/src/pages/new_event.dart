@@ -3,11 +3,15 @@ import 'package:chem_organizer/src/pages/edit_category.dart';
 import 'package:chem_organizer/src/pages/main_view.dart';
 import 'package:chem_organizer/src/pages/new_category.dart';
 import 'package:chem_organizer/src/provider/categories_controller.dart';
+import 'package:chem_organizer/src/services/push_notifications_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 
 class NewEvent extends StatefulWidget {
   final String user;
@@ -28,6 +32,7 @@ class _NewEventState extends State<NewEvent> {
   TimeOfDay _time = TimeOfDay.now();
   var _selectedCategory;
   int _selectedTimeNotification = 10;
+  dynamic data;
 
   _NewEventState(this.user);
 
@@ -66,7 +71,7 @@ class _NewEventState extends State<NewEvent> {
   addEvent() {
     DateTime fecha = new DateTime(
         _date.year, _date.month, _date.day, _time.hour, _time.minute);
-    FirebaseFirestore.instance
+    data = FirebaseFirestore.instance
         .collection('usuarios')
         .doc(this.user)
         .collection('eventos')
@@ -85,17 +90,26 @@ class _NewEventState extends State<NewEvent> {
                   textColor: Colors.white),
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => MainView(user: this.user,)),
-              )
+                MaterialPageRoute(
+                    builder: (context) => MainView(
+                          user: this.user,
+                        )),
+              ),
+              print("SOY DATAAAAAA" + value.id),
+              //Mostrar notificacion
+              displayNotification(
+                  01, nameController.text, "Tienes una tarea pendiente", fecha)
             })
-        .catchError((error) => {
-              Fluttertoast.showToast(
-                  msg: 'Hubo un error al añadir el evento',
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  backgroundColor: Colors.red.shade300,
-                  textColor: Colors.white)
-            });
+        .catchError(
+          (error) => {
+            Fluttertoast.showToast(
+                msg: 'Hubo un error al añadir el evento',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Colors.red.shade300,
+                textColor: Colors.white)
+          },
+        );
   }
 
   void showToast() {
@@ -271,7 +285,9 @@ class _NewEventState extends State<NewEvent> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => NewCategory(user: this.user,)),
+                                      builder: (context) => NewCategory(
+                                            user: this.user,
+                                          )),
                                 );
                               },
                             ),
@@ -377,5 +393,20 @@ class _NewEventState extends State<NewEvent> {
         height: 10,
       );
     }
+  }
+
+  Future<void> displayNotification(
+      int id, String title, String body, DateTime dateTime) async {
+    notificationsPlugin.zonedSchedule(
+        id,
+        title,
+        body,
+        tz.TZDateTime.from(dateTime, tz.local),
+        NotificationDetails(
+            android: AndroidNotificationDetails(
+                'channelId', 'channelName', 'channelDescription')),
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        androidAllowWhileIdle: true);
   }
 }

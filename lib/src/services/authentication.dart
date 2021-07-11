@@ -1,7 +1,10 @@
 import 'package:chem_organizer/src/models/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class UserAuthentication {
+  FlutterLocalNotificationsPlugin notificationsPlugin =
+      new FlutterLocalNotificationsPlugin();
   final _authFirebase = FirebaseAuth.instance;
   Future<Login> register(String email, String password) async {
     String id = "";
@@ -54,5 +57,6 @@ class UserAuthentication {
 
   Future logout() async {
     await FirebaseAuth.instance.signOut();
+    await notificationsPlugin.cancelAll();
   }
 }
