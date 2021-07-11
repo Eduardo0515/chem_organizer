@@ -3,6 +3,7 @@ import 'package:chem_organizer/src/pages/edit_event.dart';
 import 'package:chem_organizer/src/pages/info_event.dart';
 import 'package:chem_organizer/src/provider/categories_controller.dart';
 import 'package:chem_organizer/src/provider/events_controller.dart';
+import 'package:chem_organizer/src/services/push_notifications_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -170,12 +171,14 @@ class _EventsState extends State<Events> {
                       key: UniqueKey(),
                       onDismissed: (direction) {
                         setState(() {
+                          int idNotification = doc.get('id');
                           eventsController
                               .deleteEvent(doc.id, this.user)
                               .then((value) => {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
-                                            content: Text('Evento eliminado')))
+                                            content: Text('Evento eliminado'))),
+                                            notificationsPlugin.cancel(idNotification),
                                   });
                         });
                       },

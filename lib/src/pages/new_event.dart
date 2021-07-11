@@ -70,7 +70,7 @@ class _NewEventState extends State<NewEvent> {
   addEvent() {
     DateTime fecha = new DateTime(
         _date.year, _date.month, _date.day, _time.hour, _time.minute);
-        int id = Timestamp.now().millisecondsSinceEpoch;
+        int id = Timestamp.now().seconds;
     data = FirebaseFirestore.instance
         .collection('usuarios')
         .doc(this.user)

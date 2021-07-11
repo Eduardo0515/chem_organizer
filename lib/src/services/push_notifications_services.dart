@@ -8,6 +8,7 @@ import 'package:timezone/data/latest.dart' as tz;
 
 FlutterLocalNotificationsPlugin notificationsPlugin =
     new FlutterLocalNotificationsPlugin();
+    
 
 class PushNotificationsServices {
   static FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -72,5 +73,9 @@ class PushNotificationsServices {
 
   static closeStreams() {
     _messageStream.close();
+  }
+
+  cancelNotificaion(int id) async{
+    await notificationsPlugin.cancel(id);
   }
 }
