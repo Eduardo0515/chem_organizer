@@ -11,7 +11,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz;
 
 class NewEvent extends StatefulWidget {
   final String user;
@@ -71,11 +70,13 @@ class _NewEventState extends State<NewEvent> {
   addEvent() {
     DateTime fecha = new DateTime(
         _date.year, _date.month, _date.day, _time.hour, _time.minute);
+        int id = Timestamp.now().millisecondsSinceEpoch;
     data = FirebaseFirestore.instance
         .collection('usuarios')
         .doc(this.user)
         .collection('eventos')
         .add({
+          'id': id,
           'nombre': nameController.text,
           'fecha': fecha,
           'categoria': _selectedCategory,
@@ -98,7 +99,7 @@ class _NewEventState extends State<NewEvent> {
               print("SOY DATAAAAAA" + value.id),
               //Mostrar notificacion
               displayNotification(
-                  01, nameController.text, "Tienes una tarea pendiente", fecha)
+                  id, nameController.text, "Tienes una tarea pendiente", fecha)
             })
         .catchError(
           (error) => {

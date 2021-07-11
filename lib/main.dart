@@ -4,8 +4,8 @@ import 'dart:ui';
 import 'package:chem_organizer/src/pages/login_page.dart';
 import 'package:chem_organizer/src/pages/main_view.dart';
 import 'package:chem_organizer/src/pages/message_view.dart';
-import 'package:chem_organizer/src/pages/register_page.dart';
 import 'package:chem_organizer/src/services/push_notifications_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -91,7 +91,9 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       routes: {
-        'home': (_) => RegisterPage(),
+        'home': (_) => FirebaseAuth.instance.currentUser == null
+            ? LoginPage()
+            : MainView(user: FirebaseAuth.instance.currentUser!.uid),
         'message': (_) => MessageView(),
       },
     );

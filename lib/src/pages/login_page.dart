@@ -3,6 +3,7 @@ import 'package:chem_organizer/src/pages/calendar.dart';
 import 'package:chem_organizer/src/pages/main_view.dart';
 import 'package:chem_organizer/src/pages/register_page.dart';
 import 'package:chem_organizer/src/services/authentication.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -153,12 +154,14 @@ class _State extends State<LoginPage> {
                                         {
                                           print("Correcto"),
                                           print(value.id),
-                                          Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    MainView(user: value.id,)),
-                                          )
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      MainView(
+                                                        user: value.id,
+                                                      )),
+                                              (_) => false)
                                         }
                                       else
                                         {_showAlertDialog()}
