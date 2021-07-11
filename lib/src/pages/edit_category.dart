@@ -6,15 +6,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class EditCategory extends StatelessWidget {
   final category;
-
-  const EditCategory({Key? key, @required this.category}) : super(key: key);
+  final String user;
+  const EditCategory({Key? key, @required this.category, required this.user})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
 
     CategoriesController categoriesController =
-        new CategoriesController('hugo');
+        new CategoriesController(this.user);
 
     TextEditingController _categoryController = TextEditingController();
     _categoryController.text = category.category;
@@ -124,7 +125,9 @@ class EditCategory extends StatelessWidget {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => NewEvent()),
+                                      builder: (context) => NewEvent(
+                                            user: this.user,
+                                          )),
                                 )
                               });
                         },

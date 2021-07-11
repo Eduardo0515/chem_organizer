@@ -30,6 +30,7 @@ dependencies:
   fluttertoast: ^8.0.7
   intl: ^0.17.0
   table_calendar: ^3.0.0
+  firebase_auth: ^2.0.0
 
 dev_dependencies:
   flutter_test:

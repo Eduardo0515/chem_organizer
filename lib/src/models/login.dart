@@ -1,6 +1,7 @@
-class Login{
+class Login {
   bool auth;
-  String token;
+  String id;
+  String message;
 
-  Login({required this.auth,required this.token});
+  Login({required this.auth, required this.id, required this.message});
 }

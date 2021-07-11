@@ -8,21 +8,32 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Events extends StatefulWidget {
+  final String user;
+  const Events({Key? key, required this.user}) : super(key: key);
+
   @override
-  State<StatefulWidget> createState() => new _EventsState();
+  State<StatefulWidget> createState() => new _EventsState(this.user);
 }
 
 class _EventsState extends State<Events> {
+  final String user;
   final eventsController = EventsController();
   Timestamp time = new Timestamp.fromDate(DateTime.now());
   String _selectedIdCategory = 'todos';
 
-  CategoriesController categoriesController = new CategoriesController('hugo');
+  late CategoriesController categoriesController;
+
+  _EventsState(this.user);
+
+  @override
+  void initState() {
+    categoriesController = new CategoriesController(this.user);
+  }
 
   Stream<QuerySnapshot<Object?>> getQuery() {
     CollectionReference eventos = FirebaseFirestore.instance
         .collection('usuarios')
-        .doc('hugo')
+        .doc(this.user)
         .collection('eventos');
 
     if (_selectedIdCategory == 'todos')
@@ -45,7 +56,7 @@ class _EventsState extends State<Events> {
     categoriesController.getCategory(_selectedIdCategory).then((value) => {
           if (value != null) {_selectedIdCategory = 'todos'}
         });
-    eventsController.getEvents();
+    eventsController.getEvents(this.user);
     return Container(
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -71,7 +82,7 @@ class _EventsState extends State<Events> {
           child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('usuarios')
-                  .doc('hugo')
+                  .doc(this.user)
                   .collection('categories')
                   .snapshots(),
               builder: (context, snapshot) {
@@ -159,10 +170,13 @@ class _EventsState extends State<Events> {
                       key: UniqueKey(),
                       onDismissed: (direction) {
                         setState(() {
-                          eventsController.deleteEvent(doc.id).then((value) => {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Evento eliminado')))
-                              });
+                          eventsController
+                              .deleteEvent(doc.id, this.user)
+                              .then((value) => {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text('Evento eliminado')))
+                                  });
                         });
                       },
                       confirmDismiss: (_) {
@@ -240,7 +254,9 @@ class _EventsState extends State<Events> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => InfoEvent()),
+                                        builder: (context) => InfoEvent(
+                                              user: this.user,
+                                            )),
                                   );
                                 },
                               ),
@@ -253,7 +269,9 @@ class _EventsState extends State<Events> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => EditEvent()),
+                                        builder: (context) => EditEvent(
+                                              user: this.user,
+                                            )),
                                   );
                                 },
                               )

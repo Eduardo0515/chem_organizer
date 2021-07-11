@@ -1,4 +1,8 @@
+import 'package:chem_organizer/src/models/login.dart';
 import 'package:chem_organizer/src/pages/calendar.dart';
+import 'package:chem_organizer/src/pages/main_view.dart';
+import 'package:chem_organizer/src/pages/register_page.dart';
+import 'package:chem_organizer/src/services/authentication.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -7,8 +11,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _State extends State<LoginPage> {
-  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  final userAuthentication = UserAuthentication();
 
   final formKey = GlobalKey<FormState>();
 
@@ -36,70 +41,61 @@ class _State extends State<LoginPage> {
                 children: <Widget>[
                   Container(
                     alignment: Alignment.center,
-                    padding: EdgeInsets.fromLTRB(60, 100, 60, 40),
-                    child: Image.asset("assets/iconoLogin.png",
-                        width: 170, height: 170),
+                    padding: EdgeInsets.fromLTRB(60, 10, 60, 40),
+                    child: Icon(
+                      Icons.person_pin,
+                      size: 200.0,
+                      color: Colors.deepPurpleAccent.shade200,
+                    ),
                   ),
                   Container(
                     padding: EdgeInsets.fromLTRB(60, 10, 60, 20),
                     child: TextFormField(
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Campo vacío';
+                          return 'Campo requerido';
                         } else {
-                          if (value.length < 8) {
-                            return 'El usuario debe tener al menos 8 caracteres';
-                          } else {
-                            if (value.length > 30) {
-                              return 'El usuario debe tener 30 caracteres como maximo';
-                            } else {
-                              if (RegExp(r'^[\da-zA-Z]+$').hasMatch(value)) {
-                                if (!RegExp(r'[a-zA-Z]+').hasMatch(value)) {
-                                  return "El usuario debe contener al menos una letra";
-                                }
-                              } else {
-                                return "El usuario debe ser alfanumerico";
-                              }
-                            }
+                          if (!RegExp(
+                                  r'^[a-zA-Z0-9+_\.-]+@[a-zA-Z0-9-]+\.[a-z0-9]+')
+                              .hasMatch(value)) {
+                            return 'Ingrese un formato de correo válido';
                           }
                         }
-                        return null;
                       },
-                      controller: nameController,
+                      controller: emailController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person),
+                        prefixIcon: Icon(
+                          Icons.email,
+                          color: Colors.deepPurpleAccent.shade100,
+                        ),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
-                        labelText: 'Usuario',
+                        labelText: 'Correo',
                       ),
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.fromLTRB(60, 10, 60, 10),
+                    padding: EdgeInsets.fromLTRB(60, 10, 60, 40),
                     child: TextFormField(
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Campo vacío';
+                          return 'Campo requerido';
                         } else {
                           if (value.length < 8) {
-                            return 'Contraseña muy corta';
+                            return 'La contraseña debe contener al menos ocho elementos';
                           } else {
                             if (value.length > 30) {
-                              return 'Tamaño de contraseña inválida';
+                              return 'La contraseña no debe exceder de 30 elementos';
                             } else {
                               if (value.contains(' ')) {
-                                return 'No se acepta espacios';
+                                return 'No se aceptan espacios';
                               } else {
                                 if (!RegExp(
                                         r'(?=.*[a-zA-Z])(?=.*[!@$%&])(?=.*[0-9])')
                                     .hasMatch(value)) {
                                   if (!RegExp(r'(?=.*[a-zA-Z])(?=.*[0-9])')
                                       .hasMatch(value)) {
-                                    return 'Dede ser alfanumérica';
-                                  }
-                                  if (!RegExp(r'(?=.*[!@$%&])')
-                                      .hasMatch(value)) {
-                                    return 'use al menos un @!\$%&';
+                                    return 'Debe contener números y letras';
                                   }
                                 }
                               }
@@ -111,7 +107,10 @@ class _State extends State<LoginPage> {
                       obscureText: hidePassword,
                       controller: passwordController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock),
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: Colors.deepPurpleAccent.shade100,
+                        ),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
                         labelText: 'Contraseña',
@@ -133,18 +132,37 @@ class _State extends State<LoginPage> {
                       height: 50,
                       width: 310,
                       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: RaisedButton(
-                        shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(20.0)),
-                        textColor: Colors.white,
-                        color: Color.fromRGBO(0, 176, 70, 69),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.deepPurpleAccent.shade100,
+                          shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(20.0)),
+                          textStyle: TextStyle(color: Colors.white),
+                          shadowColor: Colors.grey,
+                        ),
                         child: Text('Iniciar sesión',
                             style: TextStyle(fontSize: 18)),
                         onPressed: () {
-                          //print(nameController.text);
-                          //print(passwordController.text);
                           if (formKey.currentState!.validate()) {
                             print("validacion exitosa");
+                            userAuthentication
+                                .login(emailController.text,
+                                    passwordController.text)
+                                .then((value) => {
+                                      if (value.auth)
+                                        {
+                                          print("Correcto"),
+                                          print(value.id),
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    MainView(user: value.id,)),
+                                          )
+                                        }
+                                      else
+                                        {_showAlertDialog()}
+                                    });
                           }
                         },
                       )),
@@ -154,18 +172,20 @@ class _State extends State<LoginPage> {
                         children: <Widget>[
                           Text('¿No tienes una cuenta?',
                               style: TextStyle(fontSize: 14)),
-                          FlatButton(
-                            textColor: Colors.blue,
+                          GestureDetector(
                             child: Text(
-                              'Registrate',
-                              style: TextStyle(fontSize: 20),
+                              '   Regístrate',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.deepPurpleAccent.shade100,
+                              ),
                             ),
-                            onPressed: () {
+                            onTap: () {
                               print("Regístrate");
-                              Navigator.pushReplacement(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => CalendarPage()),
+                                    builder: (context) => RegisterPage()),
                               );
                             },
                           )
@@ -189,7 +209,10 @@ class _State extends State<LoginPage> {
             title: Text("ERROR"),
             content: Text("El usuario o contraseña son incorrectos"),
             actions: <Widget>[
-              RaisedButton(
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.deepPurpleAccent.shade200,
+                ),
                 child: Text(
                   "CERRAR",
                   style: TextStyle(color: Colors.black),

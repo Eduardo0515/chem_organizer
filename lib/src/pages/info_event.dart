@@ -10,22 +10,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class InfoEvent extends StatefulWidget {
-  const InfoEvent({Key? key}) : super(key: key);
+  final String user;
+  const InfoEvent({Key? key, required this.user}) : super(key: key);
 
   @override
-  _InfoEventState createState() => _InfoEventState();
+  _InfoEventState createState() => _InfoEventState(this.user);
 }
 
 class _InfoEventState extends State<InfoEvent> {
+  final String user;
   final _formKey = GlobalKey<FormState>();
-  CategoriesController categoriesController =
-      new CategoriesController('username');
+  late CategoriesController categoriesController;
 
   TextEditingController nameController = TextEditingController();
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
   var _selectedCategory;
   int _selectedTimeNotification = 10;
+
+  _InfoEventState(this.user);
+
+  @override
+  void initState() {
+    categoriesController = new CategoriesController(this.user);
+  }
 
   void _selectTime() async {
     final TimeOfDay? newTime = await showTimePicker(
@@ -59,7 +67,7 @@ class _InfoEventState extends State<InfoEvent> {
         _date.year, _date.month, _date.day, _time.hour, _time.minute);
     FirebaseFirestore.instance
         .collection('usuarios')
-        .doc('hugo')
+        .doc(this.user)
         .collection('eventos')
         .add({
           'nombre': nameController.text,
@@ -76,7 +84,7 @@ class _InfoEventState extends State<InfoEvent> {
                   textColor: Colors.white),
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => MainView()),
+                MaterialPageRoute(builder: (context) => MainView(user: this.user,)),
               )
             })
         .catchError((error) => {
@@ -210,7 +218,7 @@ class _InfoEventState extends State<InfoEvent> {
                         StreamBuilder<QuerySnapshot>(
                             stream: FirebaseFirestore.instance
                                 .collection("usuarios")
-                                .doc('hugo')
+                                .doc(this.user)
                                 .collection('categories')
                                 .snapshots(),
                             builder: (context, snapshot) {
@@ -309,7 +317,10 @@ class _InfoEventState extends State<InfoEvent> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EditCategory(category: value),
+                          builder: (context) => EditCategory(
+                            category: value,
+                            user: this.user,
+                          ),
                         ),
                       )
                     });

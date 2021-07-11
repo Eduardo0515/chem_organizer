@@ -62,7 +62,7 @@ class CategoriesController {
   Future deleteCategory(idCategory) async {
     CollectionReference tareas = FirebaseFirestore.instance
         .collection('usuarios')
-        .doc('hugo')
+        .doc(username)
         .collection('eventos');
     return tareas
         .where('categoria', isEqualTo: idCategory)

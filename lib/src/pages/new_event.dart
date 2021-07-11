@@ -10,22 +10,31 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class NewEvent extends StatefulWidget {
-  const NewEvent({Key? key}) : super(key: key);
+  final String user;
+  const NewEvent({Key? key, required this.user}) : super(key: key);
 
   @override
-  _NewEventState createState() => _NewEventState();
+  _NewEventState createState() => _NewEventState(this.user);
 }
 
 class _NewEventState extends State<NewEvent> {
+  final String user;
   final _formKey = GlobalKey<FormState>();
 
-  CategoriesController categoriesController = new CategoriesController('hugo');
+  late CategoriesController categoriesController;
 
   TextEditingController nameController = TextEditingController();
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
   var _selectedCategory;
   int _selectedTimeNotification = 10;
+
+  _NewEventState(this.user);
+
+  @override
+  void initState() {
+    categoriesController = new CategoriesController(this.user);
+  }
 
   void _selectTime() async {
     final TimeOfDay? newTime = await showTimePicker(
@@ -59,7 +68,7 @@ class _NewEventState extends State<NewEvent> {
         _date.year, _date.month, _date.day, _time.hour, _time.minute);
     FirebaseFirestore.instance
         .collection('usuarios')
-        .doc('hugo')
+        .doc(this.user)
         .collection('eventos')
         .add({
           'nombre': nameController.text,
@@ -76,7 +85,7 @@ class _NewEventState extends State<NewEvent> {
                   textColor: Colors.white),
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => MainView()),
+                MaterialPageRoute(builder: (context) => MainView(user: this.user,)),
               )
             })
         .catchError((error) => {
@@ -210,7 +219,7 @@ class _NewEventState extends State<NewEvent> {
                         StreamBuilder<QuerySnapshot>(
                             stream: FirebaseFirestore.instance
                                 .collection("usuarios")
-                                .doc('hugo')
+                                .doc(this.user)
                                 .collection('categories')
                                 .snapshots(),
                             builder: (context, snapshot) {
@@ -262,7 +271,7 @@ class _NewEventState extends State<NewEvent> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => NewCategory()),
+                                      builder: (context) => NewCategory(user: this.user,)),
                                 );
                               },
                             ),
@@ -355,7 +364,10 @@ class _NewEventState extends State<NewEvent> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EditCategory(category: value),
+                          builder: (context) => EditCategory(
+                            category: value,
+                            user: this.user,
+                          ),
                         ),
                       )
                     });

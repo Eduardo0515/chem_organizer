@@ -6,11 +6,15 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 class CalendarPage extends StatefulWidget {
+  final String user;
+  const CalendarPage({Key? key, required this.user});
+
   @override
-  State<CalendarPage> createState() => new _CalendarPageState();
+  State<CalendarPage> createState() => new _CalendarPageState(this.user);
 }
 
 class _CalendarPageState extends State<CalendarPage> {
+  final String user;
   final eventsController = EventsController();
   late final ValueNotifier<List<dynamic>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
@@ -18,6 +22,8 @@ class _CalendarPageState extends State<CalendarPage> {
   DateTime? _selectedDay;
   LinkedHashMap<DateTime, List<dynamic>> events =
       LinkedHashMap<DateTime, List<dynamic>>();
+
+  _CalendarPageState(this.user);
 
   List<dynamic> getEventsForDay(DateTime day) {
     return events[day] ?? [];
@@ -28,7 +34,7 @@ class _CalendarPageState extends State<CalendarPage> {
     super.initState();
     initializeDateFormatting();
     _selectedDay = _focusedDay;
-    eventsController.getEvents().then((value) => {events = value});
+    eventsController.getEvents(this.user).then((value) => {events = value});
     _selectedEvents = ValueNotifier(events[_selectedDay] ?? []);
   }
 

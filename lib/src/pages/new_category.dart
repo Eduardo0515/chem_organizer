@@ -3,19 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class NewCategory extends StatefulWidget {
-  const NewCategory({Key? key}) : super(key: key);
+  final String user;
+  const NewCategory({Key? key, required this.user}) : super(key: key);
 
   @override
-  _NewCategoryState createState() => _NewCategoryState();
+  _NewCategoryState createState() => _NewCategoryState(this.user);
 }
 
 class _NewCategoryState extends State<NewCategory> {
-  CollectionReference categories =
-      FirebaseFirestore.instance.collection('usuarios').doc('hugo').collection('categories');
+  final String user;
+  late CollectionReference categories;
 
   final _formKey = GlobalKey<FormState>();
   bool _exist = false;
   TextEditingController _categoryController = TextEditingController();
+
+  _NewCategoryState(this.user);
+
+  @override
+  void initState() {
+    categories = FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(this.user)
+        .collection('categories');
+  }
 
   existCategory() async {
     categories
