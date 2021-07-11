@@ -70,12 +70,13 @@ class _NewEventState extends State<NewEvent> {
   addEvent() {
     DateTime fecha = new DateTime(
         _date.year, _date.month, _date.day, _time.hour, _time.minute);
+        int id = Timestamp.now().millisecondsSinceEpoch;
     data = FirebaseFirestore.instance
         .collection('usuarios')
         .doc(this.user)
         .collection('eventos')
         .add({
-          'id': Timestamp.now().millisecondsSinceEpoch,
+          'id': id,
           'nombre': nameController.text,
           'fecha': fecha,
           'categoria': _selectedCategory,
@@ -98,7 +99,7 @@ class _NewEventState extends State<NewEvent> {
               print("SOY DATAAAAAA" + value.id),
               //Mostrar notificacion
               displayNotification(
-                  01, nameController.text, "Tienes una tarea pendiente", fecha)
+                  id, nameController.text, "Tienes una tarea pendiente", fecha)
             })
         .catchError(
           (error) => {
