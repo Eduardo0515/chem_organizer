@@ -35,7 +35,7 @@ class _EventsState extends State<Events> {
         .collection('usuarios')
         .doc(this.user)
         .collection('eventos');
-
+    //devolver el tipo de consulta para la agrupacion por categorias
     if (_selectedIdCategory == 'todos')
       return eventos
           .where("fecha", isGreaterThanOrEqualTo: time)
@@ -96,6 +96,13 @@ class _EventsState extends State<Events> {
                       style: TextStyle(color: Colors.white),
                     ),
                     value: 'todos',
+                  ));
+                  items.add(DropdownMenuItem(
+                    child: Text(
+                      'NINGUNO',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    value: '0001',
                   ));
                   for (int i = 0; i < snapshot.data!.docs.length; i++) {
                     DocumentSnapshot snap = snapshot.data!.docs[i];
@@ -224,24 +231,7 @@ class _EventsState extends State<Events> {
                           ),
                           Container(
                             //padding: EdgeInsets.all(15.0),
-                            child: StreamBuilder<CategoryEvent?>(
-                                stream: categoriesController
-                                    .getCategory(doc.get('categoria'))
-                                    .asStream(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                        color: Colors.amber,
-                                      ),
-                                    );
-                                  } else {
-                                    return Text(
-                                      snapshot.data!.category,
-                                      style: TextStyle(color: Colors.white),
-                                    );
-                                  }
-                                }),
+                            child: buildCategoria(doc.get('categoria')),
                           ),
                           Column(
                             children: <Widget>[
@@ -287,5 +277,31 @@ class _EventsState extends State<Events> {
         )),
       ]),
     );
+  }
+
+  buildCategoria(String idCategoria) {
+    if (idCategoria == '0001') {
+      return Text(
+        'NINGUNO',
+        style: TextStyle(color: Colors.white),
+      );
+    } else {
+      return StreamBuilder<CategoryEvent?>(
+          stream: categoriesController.getCategory(idCategoria).asStream(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: Colors.amber,
+                ),
+              );
+            } else {
+              return Text(
+                snapshot.data!.category,
+                style: TextStyle(color: Colors.white),
+              );
+            }
+          });
+    }
   }
 }

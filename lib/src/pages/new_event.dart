@@ -30,7 +30,7 @@ class _NewEventState extends State<NewEvent> {
   TextEditingController nameController = TextEditingController();
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
-  var _selectedCategory;
+  var _selectedCategory = '0001';
   int _selectedTimeNotification = 10;
   dynamic data;
 
@@ -241,6 +241,13 @@ class _NewEventState extends State<NewEvent> {
                                 return Text("Loading.....");
                               else {
                                 List<DropdownMenuItem<String>> items = [];
+                                items.add(DropdownMenuItem(
+                                  child: Text(
+                                    'NINGUNO',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  value: "0001",
+                                ));
                                 for (int i = 0;
                                     i < snapshot.data!.docs.length;
                                     i++) {
@@ -262,7 +269,7 @@ class _NewEventState extends State<NewEvent> {
                                       Color.fromRGBO(133, 45, 145, 1.0),
                                   onChanged: (newValue) {
                                     setState(() {
-                                      _selectedCategory = newValue;
+                                      _selectedCategory = newValue.toString();
                                     });
                                   },
                                   value: _selectedCategory,
