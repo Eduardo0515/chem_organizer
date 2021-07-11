@@ -27,6 +27,7 @@ class _MainViewState extends State<MainView> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           toolbarHeight: 125,
           title: Container(
               padding: EdgeInsets.all(20),

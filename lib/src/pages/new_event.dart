@@ -26,12 +26,13 @@ class _NewEventState extends State<NewEvent> {
 
   late CategoriesController categoriesController;
 
-  TextEditingController nameController = TextEditingController();
-  DateTime _date = DateTime.now();
-  TimeOfDay _time = TimeOfDay.now();
-  var _selectedCategory;
+  TextEditingController nameController =
+      TextEditingController(); //variable para el nombre del evento
+  DateTime _date = DateTime.now(); // variable para la fecha
+  TimeOfDay _time = TimeOfDay.now(); //variable para el tiempo
+  var _selectedCategory = '0001'; //la caregoria de evento
   int _selectedTimeNotification = 10;
-  dynamic data;
+  dynamic data; //datos del evento
 
   _NewEventState(this.user);
 
@@ -41,6 +42,7 @@ class _NewEventState extends State<NewEvent> {
   }
 
   void _selectTime() async {
+    // metodo para el time picker
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
       initialTime: _time,
@@ -53,6 +55,7 @@ class _NewEventState extends State<NewEvent> {
   }
 
   void _selectDate(BuildContext context) async {
+    //metodo de date picker
     final DateTime? newDate = await showDatePicker(
       context: context,
       initialDate: _date,
@@ -229,6 +232,7 @@ class _NewEventState extends State<NewEvent> {
                       style: Theme.of(context).textTheme.headline3,
                     ),
                     Row(
+                      //se crean las opciones para las categorias del evento
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         StreamBuilder<QuerySnapshot>(
@@ -242,6 +246,13 @@ class _NewEventState extends State<NewEvent> {
                                 return Text("Loading.....");
                               else {
                                 List<DropdownMenuItem<String>> items = [];
+                                items.add(DropdownMenuItem(
+                                  child: Text(
+                                    'NINGUNO',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  value: "0001",
+                                ));
                                 for (int i = 0;
                                     i < snapshot.data!.docs.length;
                                     i++) {
@@ -263,7 +274,7 @@ class _NewEventState extends State<NewEvent> {
                                       Color.fromRGBO(133, 45, 145, 1.0),
                                   onChanged: (newValue) {
                                     setState(() {
-                                      _selectedCategory = newValue;
+                                      _selectedCategory = newValue.toString();
                                     });
                                   },
                                   value: _selectedCategory,
@@ -278,6 +289,7 @@ class _NewEventState extends State<NewEvent> {
                           width: 10,
                         ),
                         Column(
+                          //opciones de editar o añadir evento
                           children: <Widget>[
                             _editButton(context),
                             TextButton(
@@ -304,6 +316,7 @@ class _NewEventState extends State<NewEvent> {
                       style: Theme.of(context).textTheme.headline3,
                     ),
                     Center(
+                      //opciones de tiempo de notificacion
                       child: DropdownButton<int>(
                         value: _selectedTimeNotification,
                         icon: const Icon(
@@ -332,6 +345,7 @@ class _NewEventState extends State<NewEvent> {
                       height: 60,
                     ),
                     Row(
+                      //boton de añidar el evento
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TextButton(
@@ -371,6 +385,7 @@ class _NewEventState extends State<NewEvent> {
   }
 
   _editButton(BuildContext context) {
+    // accion de ocultar o mostrar la opcion de editar
     if (_selectedCategory != null && _selectedCategory != '0001') {
       return TextButton(
           child: Text("Editar"),
