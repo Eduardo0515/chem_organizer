@@ -19,6 +19,8 @@ class NewEvent extends StatefulWidget {
 class _NewEventState extends State<NewEvent> {
   final _formKey = GlobalKey<FormState>();
 
+  CategoriesController categoriesController = new CategoriesController('hugo');
+
   TextEditingController nameController = TextEditingController();
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
@@ -207,7 +209,9 @@ class _NewEventState extends State<NewEvent> {
                       children: [
                         StreamBuilder<QuerySnapshot>(
                             stream: FirebaseFirestore.instance
-                                .collection("usuarios").doc('hugo').collection('categories')
+                                .collection("usuarios")
+                                .doc('hugo')
+                                .collection('categories')
                                 .snapshots(),
                             builder: (context, snapshot) {
                               if (!snapshot.hasData)
@@ -345,7 +349,7 @@ class _NewEventState extends State<NewEvent> {
       return TextButton(
           child: Text("Editar"),
           onPressed: () {
-            CategoriesController()
+            categoriesController
                 .getCategory(_selectedCategory)
                 .then((value) => {
                       Navigator.push(

@@ -18,6 +18,8 @@ class InfoEvent extends StatefulWidget {
 
 class _InfoEventState extends State<InfoEvent> {
   final _formKey = GlobalKey<FormState>();
+  CategoriesController categoriesController =
+      new CategoriesController('username');
 
   TextEditingController nameController = TextEditingController();
   DateTime _date = DateTime.now();
@@ -207,7 +209,9 @@ class _InfoEventState extends State<InfoEvent> {
                       children: [
                         StreamBuilder<QuerySnapshot>(
                             stream: FirebaseFirestore.instance
-                                .collection("usuarios").doc('hugo').collection('categories')
+                                .collection("usuarios")
+                                .doc('hugo')
+                                .collection('categories')
                                 .snapshots(),
                             builder: (context, snapshot) {
                               if (!snapshot.hasData)
@@ -249,7 +253,6 @@ class _InfoEventState extends State<InfoEvent> {
                         SizedBox(
                           width: 10,
                         ),
-                        
                       ],
                     ),
                     SizedBox(
@@ -287,7 +290,6 @@ class _InfoEventState extends State<InfoEvent> {
                     SizedBox(
                       height: 60,
                     ),
-                    
                   ],
                 ),
               ),
@@ -301,7 +303,7 @@ class _InfoEventState extends State<InfoEvent> {
       return TextButton(
           child: Text("Editar"),
           onPressed: () {
-            CategoriesController()
+            categoriesController
                 .getCategory(_selectedCategory)
                 .then((value) => {
                       Navigator.push(

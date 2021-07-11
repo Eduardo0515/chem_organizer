@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 import 'package:chem_organizer/src/models/categoryEvent.dart';
-=======
 import 'package:chem_organizer/src/pages/edit_event.dart';
 import 'package:chem_organizer/src/pages/info_event.dart';
->>>>>>> main
+import 'package:chem_organizer/src/provider/categories_controller.dart';
 import 'package:chem_organizer/src/provider/events_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +17,7 @@ class _EventsState extends State<Events> {
   Timestamp time = new Timestamp.fromDate(DateTime.now());
   String _selectedIdCategory = 'todos';
 
-  CollectionReference categories = FirebaseFirestore.instance
-      .collection("usuarios")
-      .doc('hugo')
-      .collection('categories');
+  CategoriesController categoriesController = new CategoriesController('hugo');
 
   Stream<QuerySnapshot<Object?>> getQuery() {
     CollectionReference eventos = FirebaseFirestore.instance
@@ -38,8 +33,8 @@ class _EventsState extends State<Events> {
           .snapshots();
     else
       return eventos
-          .where("fecha", isGreaterThanOrEqualTo: time)
           .where('categoria', isEqualTo: _selectedIdCategory)
+          .where("fecha", isGreaterThanOrEqualTo: time)
           .orderBy("fecha")
           .limit(25)
           .snapshots();
@@ -47,9 +42,12 @@ class _EventsState extends State<Events> {
 
   @override
   Widget build(BuildContext context) {
+    categoriesController.getCategory(_selectedIdCategory).then((value) => {
+          if (value != null) {_selectedIdCategory = 'todos'}
+        });
     eventsController.getEvents();
-    print("------------------recragr$_selectedIdCategory");
     return Container(
+      padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
           gradient: LinearGradient(
         begin: Alignment.topCenter,
@@ -59,81 +57,104 @@ class _EventsState extends State<Events> {
           Color.fromRGBO(49, 42, 108, 1.0),
         ],
       )),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-          Widget>[
+      child:
+          Column(crossAxisAlignment: CrossAxisAlignment.end, children: <Widget>[
         Text(
-          "      Agrupar por:",
+          "Agrupar por:",
           textAlign: TextAlign.left,
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.white70,
           ),
         ),
         Container(
-            height: 50,
-            child: StreamBuilder<QuerySnapshot>(
-              stream: categories.snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else {
-                  return Container(
-                      padding: EdgeInsets.all(10),
-                      child: ListView(
-                          reverse: true,
-                          scrollDirection: Axis.horizontal,
-                          children: snapshot.data!.docs.map((doc) {
-                            return Row(
-                              children: [
-                                TextButton(
-                                  style: ElevatedButton.styleFrom(
-                                    elevation: 5,
-                                    primary: Colors.pink.shade400,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(20)),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    doc.get('category'),
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  onPressed: () {
-                                    _selectedIdCategory = doc.id;
-                                    print(_selectedIdCategory);
-                                  },
-                                ),
-                                SizedBox(width: 5)
-                              ],
-                            );
-                          }).toList()));
-                }
-              },
-            )),
-        Expanded(
+          height: 50,
           child: StreamBuilder<QuerySnapshot>(
-            stream: getQuery(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (snapshot.data!.docs.isEmpty) {
-                return Center(
-                  child: Text(
-                    'Sin eventos próximos',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+              stream: FirebaseFirestore.instance
+                  .collection('usuarios')
+                  .doc('hugo')
+                  .collection('categories')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData)
+                  return Center(child: CircularProgressIndicator());
+                else {
+                  List<DropdownMenuItem<String>> items = [];
+                  items.add(DropdownMenuItem(
+                    child: Text(
+                      'TODOS',
+                      style: TextStyle(color: Colors.white),
                     ),
+                    value: 'todos',
+                  ));
+                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                    DocumentSnapshot snap = snapshot.data!.docs[i];
+                    items.add(
+                      DropdownMenuItem(
+                        child: Text(
+                          snap.get("category"),
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        value: "${snap.id}",
+                      ),
+                    );
+                  }
+                  var dropdownButton = DropdownButton(
+                    icon: Icon(
+                      Icons.arrow_drop_down_circle_outlined,
+                      color: Colors.white,
+                    ),
+                    items: items,
+                    dropdownColor: Color.fromRGBO(133, 45, 145, 1.0),
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedIdCategory = newValue.toString();
+                      });
+                    },
+                    value: _selectedIdCategory,
+                    isExpanded: false,
+                    hint: Text("Selecionar Categoria",
+                        style: TextStyle(color: Colors.white60)),
+                  );
+                  return dropdownButton;
+                }
+              }),
+        ),
+        Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+          stream: getQuery(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Hubo un error con la conexión',
+                  style: TextStyle(
+                    color: Colors.white30,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
                   ),
-                );
-              } else
-                return ListView(
-                  children: snapshot.data!.docs.map((doc) {
+                ),
+              );
+            }
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.data!.docs.isEmpty) {
+              return Center(
+                child: Text(
+                  'Sin eventos próximos',
+                  style: TextStyle(
+                    color: Colors.white30,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            } else
+              return ListView(
+                children: snapshot.data!.docs.map(
+                  (doc) {
                     return Dismissible(
                       key: UniqueKey(),
                       onDismissed: (direction) {
@@ -166,14 +187,14 @@ class _EventsState extends State<Events> {
                                 ));
                       },
                       background: Container(
-                          color: Colors.teal[100],
+                          color: Color.fromRGBO(252, 12, 12, 0.3),
                           child: Icon(
                             Icons.delete,
                             size: 35.0,
+                            color: Colors.white,
                           )),
                       child: Card(
-                          child: Row(
-                        children: [
+                        child: Row(children: [
                           Expanded(
                             child: ListTile(
                               contentPadding: EdgeInsets.fromLTRB(30, 0, 10, 3),
@@ -185,15 +206,14 @@ class _EventsState extends State<Events> {
                                     color: Colors.white,
                                     height: 1.7,
                                   )),
-<<<<<<< HEAD
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.all(15.0),
-                            child: StreamBuilder<DocumentSnapshot>(
-                                stream: categories
-                                    .doc(doc.get('categoria'))
-                                    .snapshots(),
+                            //padding: EdgeInsets.all(15.0),
+                            child: StreamBuilder<CategoryEvent?>(
+                                stream: categoriesController
+                                    .getCategory(doc.get('categoria'))
+                                    .asStream(),
                                 builder: (context, snapshot) {
                                   if (!snapshot.hasData) {
                                     return Center(
@@ -203,57 +223,50 @@ class _EventsState extends State<Events> {
                                     );
                                   } else {
                                     return Text(
-                                      snapshot.data!.get('category'),
+                                      snapshot.data!.category,
                                       style: TextStyle(color: Colors.white),
                                     );
                                   }
                                 }),
+                          ),
+                          Column(
+                            children: <Widget>[
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.remove_red_eye,
+                                  color: Color.fromRGBO(238, 211, 110, 0.7),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => InfoEvent()),
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Color.fromRGBO(238, 211, 110, 0.7),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditEvent()),
+                                  );
+                                },
+                              )
+                            ],
                           )
-                        ],
-                      )),
+                        ]),
+                      ),
                     );
-                  }).toList(),
-=======
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.remove_red_eye),
-                        onPressed: () {
-                        Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => InfoEvent(
-                                )),
-                              );
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () {
-                        Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditEvent(
-                                )),
-                              );
-                        },
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(15.0),
-                        child: Text(
-                          "Categoria",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    
-                    ],
-                  )
-                ),
->>>>>>> main
-                );
-            },
-          ),
-        ),
+                  },
+                ).toList(),
+              );
+          },
+        )),
       ]),
     );
   }
