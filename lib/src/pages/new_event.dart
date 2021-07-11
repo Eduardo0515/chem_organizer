@@ -23,6 +23,7 @@ class NewEvent extends StatefulWidget {
 class _NewEventState extends State<NewEvent> {
   final String user;
   final _formKey = GlobalKey<FormState>();
+  String imprimir = "Nuevo Evento Añadido";
 
   late CategoriesController categoriesController;
 
@@ -73,7 +74,12 @@ class _NewEventState extends State<NewEvent> {
   addEvent() {
     DateTime fecha = new DateTime(
         _date.year, _date.month, _date.day, _time.hour, _time.minute);
-        int id = Timestamp.now().seconds;
+    int id = Timestamp.now().seconds;
+    DateTime rememberDate = new DateTime(_date.year, _date.month, _date.day,
+        _time.hour, _time.minute - _selectedTimeNotification);
+    dynamic valor;
+    String name = nameController.text;
+
     data = FirebaseFirestore.instance
         .collection('usuarios')
         .doc(this.user)
@@ -86,8 +92,28 @@ class _NewEventState extends State<NewEvent> {
           'tiempoNotificacion': _selectedTimeNotification
         })
         .then((value) => {
+              print("SOY IDDDDDD" + id.toString()),
+
+              print("SOY IDDDDDD222222--" + (id - 1000000000).toString()),
+              print(
+                  "SOY TIEMPO BEFORE--" + _selectedTimeNotification.toString()),
+              print("SOY FECHAAAA--" + fecha.toString()),
+              print("SOY FECHAAAA2--" + rememberDate.toString()),
+              //Mostrar notificacion
+              valor = displayNotification(
+                  id, nameController.text, "Tienes una tarea pendiente", fecha),
+              if (valor != null)
+                {
+                  displayNotification(
+                      (id - 100000000),
+                      "Recordatorio",
+                      "Tienes que $name en $_selectedTimeNotification minutos",
+                      rememberDate),
+                }
+              else
+                {imprimir = "Recordatorio añadido"},
               Fluttertoast.showToast(
-                  msg: 'Nuevo Evento Añadido',
+                  msg: imprimir,
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                   backgroundColor: Colors.green.shade400,
@@ -99,10 +125,6 @@ class _NewEventState extends State<NewEvent> {
                           user: this.user,
                         )),
               ),
-              print("SOY DATAAAAAA" + value.id),
-              //Mostrar notificacion
-              displayNotification(
-                  id, nameController.text, "Tienes una tarea pendiente", fecha)
             })
         .catchError(
           (error) => {
@@ -413,16 +435,25 @@ class _NewEventState extends State<NewEvent> {
 
   Future<void> displayNotification(
       int id, String title, String body, DateTime dateTime) async {
-    notificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        tz.TZDateTime.from(dateTime, tz.local),
-        NotificationDetails(
-            android: AndroidNotificationDetails(
-                'channelId', 'channelName', 'channelDescription')),
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        androidAllowWhileIdle: true);
+    //isGreaterThanOrEqualTo
+    if (tz.TZDateTime.now(tz.local)
+        .isAfter(tz.TZDateTime.from(dateTime, tz.local))) {
+      print("isAfter--------------------------------");
+      imprimir = "Recordatorio añadido";
+      return null;
+    } else {
+      print("isBefore--------------------------------");
+      notificationsPlugin.zonedSchedule(
+          id,
+          title,
+          body,
+          tz.TZDateTime.from(dateTime, tz.local),
+          NotificationDetails(
+              android: AndroidNotificationDetails(
+                  'channelId', 'channelName', 'channelDescription')),
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          androidAllowWhileIdle: true);
+    }
   }
 }

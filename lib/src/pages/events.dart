@@ -185,7 +185,9 @@ class _EventsState extends State<Events> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                             content: Text('Evento eliminado'))),
-                                            notificationsPlugin.cancel(idNotification),
+                                    notificationsPlugin.cancel(idNotification),
+                                    notificationsPlugin
+                                        .cancel(idNotification - 100000000),
                                   });
                         });
                       },
