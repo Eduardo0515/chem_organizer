@@ -15,8 +15,7 @@ class InfoEvent extends StatefulWidget {
   final String categoria;
   final int tiempoNotificacion;
   final String fecha;
-  final String hora;
-  const InfoEvent({Key? key, required this.user, required this.nombre, required this.categoria, required this.tiempoNotificacion, required this.fecha, required this.hora}) : super(key: key);
+  const InfoEvent({Key? key, required this.user, required this.nombre, required this.categoria, required this.tiempoNotificacion, required this.fecha}) : super(key: key);
 
   @override
   _InfoEventState createState() => _InfoEventState(this.user);

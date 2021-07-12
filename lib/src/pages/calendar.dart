@@ -1,12 +1,17 @@
 import 'dart:collection';
 
+import 'package:chem_organizer/src/pages/edit_event.dart';
 import 'package:chem_organizer/src/provider/events_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:chem_organizer/src/provider/categories_controller.dart';
+
+import 'info_event.dart';
 
 class CalendarPage extends StatefulWidget {
   final String user;
+
   const CalendarPage({Key? key, required this.user});
 
   @override
@@ -15,6 +20,13 @@ class CalendarPage extends StatefulWidget {
 
 class _CalendarPageState extends State<CalendarPage> {
   final String user;
+  String nombre = "";
+  String fecha = "";
+  String categoria = "";
+  int tiempoNotificacion = 10;
+  String idCategoria = "todos";
+  late CategoriesController categoriesController = new CategoriesController(user);
+
   final eventsController = EventsController();
   late final ValueNotifier<List<dynamic>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
@@ -117,6 +129,8 @@ class _CalendarPageState extends State<CalendarPage> {
                   itemBuilder: (context, index) {
                     return Container(
                       child: Card(
+                        child: Row(children: [
+                        Expanded(
                         child: ListTile(
                           contentPadding: EdgeInsets.fromLTRB(45, 0, 55, 0),
                           onTap: () => print('${value[index].id}'),
@@ -132,6 +146,64 @@ class _CalendarPageState extends State<CalendarPage> {
                             textAlign: TextAlign.right,
                           ),
                         ),
+                        ),
+                        Column(
+                          children: <Widget>[
+                            IconButton(
+                                icon: const Icon(
+                                  Icons.remove_red_eye,
+                                  color: Color.fromRGBO(238, 211, 110, 0.7),
+                                ),
+                                onPressed: () {
+                                  nombre = value[index].name;
+                                  fecha =  eventsController.getDateFromDateTime(value[index].date);
+                                  tiempoNotificacion = value[index].timeNotification;
+                                  idCategoria = value[index].category.toString();
+                                  print(idCategoria);
+
+                                  categoriesController.getCategoriaSelected(idCategoria).then((value) => {
+                                    if(value == null){
+                                      categoria = "Ninguno",
+                                    }
+                                    else{categoria = value},
+                                    print("CATEGORIA:"),
+                                    print(categoria),
+                                    Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => InfoEvent(
+                                              user: this.user,
+                                              nombre: this.nombre,
+                                              categoria: this.categoria,
+                                              tiempoNotificacion: this.tiempoNotificacion,
+                                              fecha: this.fecha,
+                                            )),
+                                  )
+                                  });
+                                  
+
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Color.fromRGBO(238, 211, 110, 0.7),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditEvent(
+                                              user: this.user,
+                                    )),
+                                  );
+                                },
+                              )
+                          ]
+
+                        )
+                        ],
+                      ),
                       ),
                     );
                   },

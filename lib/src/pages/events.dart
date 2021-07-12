@@ -28,7 +28,6 @@ class _EventsState extends State<Events> {
   String nombre = "";
   int tiempoNotificacion = 0;
   String fecha = "";
-  String hora = "";
 
   late CategoriesController categoriesController;
 
@@ -276,9 +275,6 @@ class _EventsState extends State<Events> {
                                   fecha = eventsController.getDate(doc.get("fecha")).toString();
                                   print(fecha);
 
-                                  hora = fecha.split(" ").toString();
-                                  print(hora);
-
                                   print("TIEMPO NOTIFICACION:");
                                   tiempoNotificacion = doc.get('tiempoNotificacion');
                                   print(tiempoNotificacion);
@@ -286,6 +282,8 @@ class _EventsState extends State<Events> {
                                   print("ID EVENTO:");
                                   print(doc.get('id'));
 
+                                  print("idCategoria");
+                                  print(doc.get('categoria'));
                                   categoriesController.getCategoriaSelected(doc.get('categoria')).then((value) => {
                                     if(value == null){
                                       categoria = "Ninguno",
@@ -302,8 +300,6 @@ class _EventsState extends State<Events> {
                                               categoria: this.categoria,
                                               tiempoNotificacion: this.tiempoNotificacion,
                                               fecha: this.fecha,
-                                              hora: this.hora,
-
                                             )),
                                   )
                                 });
