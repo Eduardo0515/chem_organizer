@@ -48,11 +48,12 @@ class EventsController {
         t = doc['fecha'];
         date = t.toDate();
         if (auxEvents.containsKey(getJustDate(date))) {
-          auxEvents[getJustDate(date)]!
-              .add(Event(doc.id, doc['nombre'], date, doc['categoria']));
+          auxEvents[getJustDate(date)]!.add(Event(doc.id, doc['nombre'], date,
+              doc['categoria'], doc['id'], doc['tiempoNotificacion']));
         } else {
           auxEvents[getJustDate(date)] = [
-            Event(doc.id, doc['nombre'], date, doc['categoria'])
+            Event(doc.id, doc['nombre'], date, doc['categoria'], doc['id'],
+                doc['tiempoNotificacion'])
           ];
         }
       });
