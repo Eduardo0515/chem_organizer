@@ -58,5 +58,6 @@ class UserAuthentication {
   Future logout() async {
     await FirebaseAuth.instance.signOut();
     await notificationsPlugin.cancelAll();
+    print("TAREAS CANCELADAS");
   }
 }

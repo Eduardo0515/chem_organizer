@@ -7,6 +7,9 @@ import 'package:chem_organizer/src/services/push_notifications_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 
 class Events extends StatefulWidget {
   final String user;
@@ -174,11 +177,25 @@ class _EventsState extends State<Events> {
               return ListView(
                 children: snapshot.data!.docs.map(
                   (doc) {
+                    Timestamp t = doc.get('fecha');
+                    int s = doc.get('tiempoNotificacion');
+                    DateTime date = t.toDate();
+                    String name = doc.get('nombre');
+                    DateTime rememberDate = new DateTime(date.year, date.month,
+                        date.day, date.hour, date.minute - s, date.second);
+
+                    int idNotification = doc.get('id');
+                    displayNotification(idNotification, doc.get("nombre"),
+                        "Tienes un evento programado", date);
+                    displayNotification(
+                        (idNotification - 100000000),
+                        doc.get("nombre"),
+                        "Tienes que $name en $s minutos",
+                        rememberDate);
                     return Dismissible(
                       key: UniqueKey(),
                       onDismissed: (direction) {
                         setState(() {
-                          int idNotification = doc.get('id');
                           eventsController
                               .deleteEvent(doc.id, this.user)
                               .then((value) => {
@@ -307,6 +324,29 @@ class _EventsState extends State<Events> {
               );
             }
           });
+    }
+  }
+
+  Future<void> displayNotification(
+      int id, String title, String body, DateTime dateTime) async {
+    //isGreaterThanOrEqualTo
+    if (tz.TZDateTime.now(tz.local)
+        .isAfter(tz.TZDateTime.from(dateTime, tz.local))) {
+      print("isAfter--------------------------------");
+      return null;
+    } else {
+      print("isBefore--------------------------------");
+      notificationsPlugin.zonedSchedule(
+          id,
+          title,
+          body,
+          tz.TZDateTime.from(dateTime, tz.local),
+          NotificationDetails(
+              android: AndroidNotificationDetails(
+                  'channelId', 'channelName', 'channelDescription')),
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          androidAllowWhileIdle: true);
     }
   }
 }
