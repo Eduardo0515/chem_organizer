@@ -20,6 +20,52 @@ class EditCategory extends StatelessWidget {
     TextEditingController _categoryController = TextEditingController();
     _categoryController.text = category.category;
 
+    updateCategory() async {
+      bool _exist = false;
+      FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(this.user)
+          .collection('categories')
+          .where('category', isEqualTo: _categoryController.text.toUpperCase())
+          .get()
+          .then((value) => {
+                print(value.size),
+                if (value.size > 0)
+                  {
+                    Fluttertoast.showToast(
+                        msg: 'Ese nombre ya esta registrado',
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        backgroundColor: Colors.red.shade300,
+                        textColor: Colors.white),
+                    _exist = true
+                  }
+                else
+                  {_exist = false}
+              })
+          .catchError((error) => {
+                Fluttertoast.showToast(
+                    msg: 'Hubo un error al añadir la categoría',
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.red.shade300,
+                    textColor: Colors.white),
+                _exist = true
+              })
+          .then((value) => {
+                if (!_exist)
+                  {
+                    categoriesController
+                        .updateCategory(category.id, _categoryController.text)
+                        .then((value) => {
+                              Navigator.pop(
+                                context,
+                              )
+                            })
+                  }
+              });
+    }
+
     Future<void> _showDialogAlert() async {
       return showDialog<void>(
         context: context,
@@ -141,14 +187,7 @@ class EditCategory extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          categoriesController
-                              .updateCategory(
-                                  category.id, _categoryController.text)
-                              .then((value) => {
-                                    Navigator.pop(
-                                      context,
-                                    )
-                                  });
+                          updateCategory();
                         },
                         child: Text(
                           'Actualizar',

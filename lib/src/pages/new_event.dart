@@ -118,13 +118,7 @@ class _NewEventState extends State<NewEvent> {
                   gravity: ToastGravity.BOTTOM,
                   backgroundColor: Colors.green.shade400,
                   textColor: Colors.white),
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MainView(
-                          user: this.user,
-                        )),
-              ),
+              Navigator.pop(context)
             })
         .catchError(
           (error) => {
