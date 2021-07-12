@@ -287,12 +287,13 @@ class _EventsState extends State<Events> {
                                   print(doc.get('id'));
 
                                   categoriesController.getCategoriaSelected(doc.get('categoria')).then((value) => {
-                                    categoria = value,
+                                    if(value == null){
+                                      categoria = "Ninguno",
+                                    }
+                                    else{categoria = value},
                                     print("CATEGORIA:"),
                                     print(categoria),
-                                  });
-                                  
-                                  Navigator.push(
+                                    Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => InfoEvent(
@@ -304,7 +305,8 @@ class _EventsState extends State<Events> {
                                               hora: this.hora,
 
                                             )),
-                                  );
+                                  )
+                                });
                                 },
                               ),
                               IconButton(
