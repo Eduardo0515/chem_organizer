@@ -11,7 +11,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class InfoEvent extends StatefulWidget {
   final String user;
-  const InfoEvent({Key? key, required this.user}) : super(key: key);
+  final String nombre;
+  final String categoria;
+  final int tiempoNotificacion;
+  final String fecha;
+  final String hora;
+  const InfoEvent({Key? key, required this.user, required this.nombre, required this.categoria, required this.tiempoNotificacion, required this.fecha, required this.hora}) : super(key: key);
 
   @override
   _InfoEventState createState() => _InfoEventState(this.user);
@@ -20,93 +25,11 @@ class InfoEvent extends StatefulWidget {
 class _InfoEventState extends State<InfoEvent> {
   final String user;
   final _formKey = GlobalKey<FormState>();
-  late CategoriesController categoriesController;
-
-  TextEditingController nameController = TextEditingController();
-  DateTime _date = DateTime.now();
-  TimeOfDay _time = TimeOfDay.now();
-  var _selectedCategory;
-  int _selectedTimeNotification = 10;
 
   _InfoEventState(this.user);
 
   @override
   void initState() {
-    categoriesController = new CategoriesController(this.user);
-  }
-
-  void _selectTime() async {
-    final TimeOfDay? newTime = await showTimePicker(
-      context: context,
-      initialTime: _time,
-    );
-    if (newTime != null) {
-      setState(() {
-        _time = newTime;
-      });
-    }
-  }
-
-  void _selectDate(BuildContext context) async {
-    final DateTime? newDate = await showDatePicker(
-      context: context,
-      initialDate: _date,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2025),
-      helpText: 'Selecione la fecha',
-    );
-    if (newDate != null) {
-      setState(() {
-        _date = newDate;
-      });
-    }
-  }
-
-  addEvent() {
-    DateTime fecha = new DateTime(
-        _date.year, _date.month, _date.day, _time.hour, _time.minute);
-    FirebaseFirestore.instance
-        .collection('usuarios')
-        .doc(this.user)
-        .collection('eventos')
-        .add({
-          'nombre': nameController.text,
-          'fecha': fecha,
-          'categoria': _selectedCategory,
-          'tiempoNotificacion': _selectedTimeNotification
-        })
-        .then((value) => {
-              Fluttertoast.showToast(
-                  msg: 'Nuevo Evento Añadido',
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  backgroundColor: Colors.green.shade400,
-                  textColor: Colors.white),
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MainView(
-                          user: this.user,
-                        )),
-              )
-            })
-        .catchError((error) => {
-              Fluttertoast.showToast(
-                  msg: 'Hubo un error al añadir el evento',
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  backgroundColor: Colors.red.shade300,
-                  textColor: Colors.white)
-            });
-  }
-
-  void showToast() {
-    Fluttertoast.showToast(
-        msg: 'Seleccione alguna categoría',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white);
   }
 
   @override
@@ -130,7 +53,8 @@ class _InfoEventState extends State<InfoEvent> {
           ),
         ),
         body: Container(
-          padding: EdgeInsets.all(25),
+          padding: EdgeInsets.fromLTRB(30, 30, 30, 30),
+          //padding: EdgeInsets.all(25),
           decoration: BoxDecoration(
               gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -149,24 +73,26 @@ class _InfoEventState extends State<InfoEvent> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Text(
+                      ' ',
+                    ),
+                    Text(
                       'Nombre del evento:',
                       style: Theme.of(context).textTheme.headline3,
                     ),
+                    Text(
+                      " "
+                    ),
                     Container(
-                      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Campo vacío';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Evento',
-                          hintStyle: TextStyle(color: Colors.white60),
+                      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                      child: Text(
+                        widget.nombre,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold, 
+                          color: Colors.white, 
+                          fontSize: 15,
                         ),
-                        controller: nameController,
-                        style: Theme.of(context).textTheme.bodyText1,
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     SizedBox(
@@ -177,35 +103,18 @@ class _InfoEventState extends State<InfoEvent> {
                       children: [
                         Column(children: [
                           Text(
-                            'Fecha:',
+                            'Fecha     Hora:',
                             style: Theme.of(context).textTheme.headline3,
                           ),
-                          TextButton(
-                              onPressed: () {
-                                _selectDate(context);
-                              },
-                              child: new Text(
-                                "${_date.toLocal()}".split(' ')[0],
+                          Text(
+                            " "
+                          ),
+                          Text(
+                                widget.fecha,
                                 style: Theme.of(context).textTheme.bodyText1,
-                              )),
+                          ),
                         ]),
-                        Column(
-                          children: [
-                            Text(
-                              'Hora:',
-                              style: Theme.of(context).textTheme.headline3,
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                _selectTime();
-                              },
-                              child: new Text(
-                                "${_time.format(context)}",
-                                style: Theme.of(context).textTheme.bodyText1,
-                              ),
-                            )
-                          ],
-                        )
+                        
                       ],
                     ),
                     SizedBox(
@@ -215,52 +124,21 @@ class _InfoEventState extends State<InfoEvent> {
                       'Categoria:',
                       style: Theme.of(context).textTheme.headline3,
                     ),
+                    Text(
+                      ' ',
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection("usuarios")
-                                .doc(this.user)
-                                .collection('categories')
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData)
-                                return Text("Loading.....");
-                              else {
-                                List<DropdownMenuItem<String>> items = [];
-                                for (int i = 0;
-                                    i < snapshot.data!.docs.length;
-                                    i++) {
-                                  DocumentSnapshot snap =
-                                      snapshot.data!.docs[i];
-                                  items.add(
-                                    DropdownMenuItem(
-                                      child: Text(
-                                        snap.get("category"),
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      value: "${snap.id}",
-                                    ),
-                                  );
-                                }
-                                var dropdownButton = DropdownButton(
-                                  items: items,
-                                  dropdownColor:
-                                      Color.fromRGBO(133, 45, 145, 1.0),
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      _selectedCategory = newValue;
-                                    });
-                                  },
-                                  value: _selectedCategory,
-                                  isExpanded: false,
-                                  hint: Text("Selecionar Categoria",
-                                      style: TextStyle(color: Colors.white60)),
-                                );
-                                return dropdownButton;
-                              }
-                            }),
+                        Text(
+                          widget.categoria,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                          fontWeight: FontWeight.bold, 
+                          color: Colors.white, 
+                          fontSize: 15,
+                        ),
+                        ),
                         SizedBox(
                           width: 10,
                         ),
@@ -273,29 +151,19 @@ class _InfoEventState extends State<InfoEvent> {
                       'Notificar minutos antes:',
                       style: Theme.of(context).textTheme.headline3,
                     ),
+                    Text(
+                      " "
+                    ),
                     Center(
-                      child: DropdownButton<int>(
-                        value: _selectedTimeNotification,
-                        icon: const Icon(
-                          Icons.timer,
-                          color: Colors.white,
+                      child: Text(
+                          widget.tiempoNotificacion.toString(),
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                          fontWeight: FontWeight.bold, 
+                          color: Colors.white, 
+                          fontSize: 15,
                         ),
-                        iconSize: 20,
-                        elevation: 5,
-                        dropdownColor: Color.fromRGBO(133, 45, 145, 1.0),
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                        onChanged: (int? newValue) {
-                          setState(() {
-                            _selectedTimeNotification = newValue!;
-                          });
-                        },
-                        items: <int>[5, 10, 15, 20]
-                            .map<DropdownMenuItem<int>>((int value) {
-                          return DropdownMenuItem<int>(
-                            value: value,
-                            child: Text(value.toString()),
-                          );
-                        }).toList(),
+                        
                       ),
                     ),
                     SizedBox(
@@ -309,29 +177,5 @@ class _InfoEventState extends State<InfoEvent> {
         ));
   }
 
-  _editButton(BuildContext context) {
-    if (_selectedCategory != null && _selectedCategory != '0001') {
-      return TextButton(
-          child: Text("Editar"),
-          onPressed: () {
-            categoriesController
-                .getCategory(_selectedCategory)
-                .then((value) => {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditCategory(
-                            category: value,
-                            user: this.user,
-                          ),
-                        ),
-                      )
-                    });
-          });
-    } else {
-      return SizedBox(
-        height: 10,
-      );
-    }
-  }
+  
 }

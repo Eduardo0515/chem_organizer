@@ -24,6 +24,11 @@ class _EventsState extends State<Events> {
   final eventsController = EventsController();
   Timestamp time = new Timestamp.fromDate(DateTime.now());
   String _selectedIdCategory = 'todos';
+  String categoria = "";
+  String nombre = "";
+  int tiempoNotificacion = 0;
+  String fecha = "";
+  String hora = "";
 
   late CategoriesController categoriesController;
 
@@ -263,11 +268,41 @@ class _EventsState extends State<Events> {
                                   color: Color.fromRGBO(238, 211, 110, 0.7),
                                 ),
                                 onPressed: () {
+                                  print("NOMBRE:");
+                                  nombre = doc.get('nombre');
+                                  print(nombre);
+
+                                  print("FECHA:");
+                                  fecha = eventsController.getDate(doc.get("fecha")).toString();
+                                  print(fecha);
+
+                                  hora = fecha.split(" ").toString();
+                                  print(hora);
+
+                                  print("TIEMPO NOTIFICACION:");
+                                  tiempoNotificacion = doc.get('tiempoNotificacion');
+                                  print(tiempoNotificacion);
+
+                                  print("ID EVENTO:");
+                                  print(doc.get('id'));
+
+                                  categoriesController.getCategoriaSelected(doc.get('categoria')).then((value) => {
+                                    categoria = value,
+                                    print("CATEGORIA:"),
+                                    print(categoria),
+                                  });
+                                  
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => InfoEvent(
                                               user: this.user,
+                                              nombre: this.nombre,
+                                              categoria: this.categoria,
+                                              tiempoNotificacion: this.tiempoNotificacion,
+                                              fecha: this.fecha,
+                                              hora: this.hora,
+
                                             )),
                                   );
                                 },

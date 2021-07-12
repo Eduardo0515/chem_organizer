@@ -52,6 +52,22 @@ class CategoriesController {
       return null;
   }
 
+  getCategoriaSelected(idCategory) async{
+    String categoriaSelected = "ninguno";
+    final category = await FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(username)
+        .collection('categories')
+        .doc(idCategory)
+        .get();
+    if (category.exists){
+      categoriaSelected = category.get('category');
+      return categoriaSelected;
+    }
+    else
+      return null;
+  }
+
   String checkName(category) {
     return category
         .replaceAll(RegExp(r'[\s]+'), ' ')
