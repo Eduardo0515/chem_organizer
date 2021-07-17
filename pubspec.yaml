@@ -32,6 +32,12 @@ dependencies:
   table_calendar: ^3.0.0
   flutter_local_notifications: ^6.0.0
   firebase_auth: ^2.0.0
+  flutter_launcher_icons: "^0.8.0"
+
+flutter_icons:
+  android: true
+  ios: false
+  image_path: "assets/cheems.png"
 
 dev_dependencies:
   flutter_test:
