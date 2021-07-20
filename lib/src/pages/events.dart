@@ -1,4 +1,5 @@
 import 'package:chem_organizer/src/models/categoryEvent.dart';
+import 'package:chem_organizer/src/models/event.dart';
 import 'package:chem_organizer/src/pages/edit_event.dart';
 import 'package:chem_organizer/src/pages/info_event.dart';
 import 'package:chem_organizer/src/provider/categories_controller.dart';
@@ -259,69 +260,6 @@ class _EventsState extends State<Events> {
                             //padding: EdgeInsets.all(15.0),
                             child: buildCategoria(doc.get('categoria')),
                           ),
-                          Column(
-                            children: <Widget>[
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.remove_red_eye,
-                                  color: Color.fromRGBO(238, 211, 110, 0.7),
-                                ),
-                                onPressed: () {
-                                  print("NOMBRE:");
-                                  nombre = doc.get('nombre');
-                                  print(nombre);
-
-                                  print("FECHA:");
-                                  fecha = eventsController.getDate(doc.get("fecha")).toString();
-                                  print(fecha);
-
-                                  print("TIEMPO NOTIFICACION:");
-                                  tiempoNotificacion = doc.get('tiempoNotificacion');
-                                  print(tiempoNotificacion);
-
-                                  print("ID EVENTO:");
-                                  print(doc.get('id'));
-
-                                  print("idCategoria");
-                                  print(doc.get('categoria'));
-                                  categoriesController.getCategoriaSelected(doc.get('categoria')).then((value) => {
-                                    if(value == null){
-                                      categoria = "Ninguno",
-                                    }
-                                    else{categoria = value},
-                                    print("CATEGORIA:"),
-                                    print(categoria),
-                                    Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => InfoEvent(
-                                              user: this.user,
-                                              nombre: this.nombre,
-                                              categoria: this.categoria,
-                                              tiempoNotificacion: this.tiempoNotificacion,
-                                              fecha: this.fecha,
-                                            )),
-                                  )
-                                });
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.edit,
-                                  color: Color.fromRGBO(238, 211, 110, 0.7),
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => EditEvent(
-                                              user: this.user,
-                                            )),
-                                  );
-                                },
-                              )
-                            ],
-                          )
                         ]),
                       ),
                     );

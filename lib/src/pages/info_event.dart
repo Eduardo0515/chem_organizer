@@ -14,7 +14,7 @@ class InfoEvent extends StatefulWidget {
   final String nombre;
   final String categoria;
   final int tiempoNotificacion;
-  final String fecha;
+  final DateTime fecha;
   const InfoEvent({Key? key, required this.user, required this.nombre, required this.categoria, required this.tiempoNotificacion, required this.fecha}) : super(key: key);
 
   @override
@@ -101,17 +101,43 @@ class _InfoEventState extends State<InfoEvent> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Column(children: [
+                          Column(children: [
                           Text(
-                            'Fecha     Hora:',
+                            'Fecha:',
                             style: Theme.of(context).textTheme.headline3,
                           ),
+                          Text(" "),
                           Text(
-                            " "
-                          ),
-                          Text(
-                                widget.fecha,
-                                style: Theme.of(context).textTheme.bodyText1,
-                          ),
+                            '${widget.fecha}'.split(' ')[0],
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                            fontWeight: FontWeight.bold, 
+                            color: Colors.white, 
+                            fontSize: 15,
+                        ),
+                        textAlign: TextAlign.center,
+                        )
+                        ]),
+                        Text(" "),
+                        Column(
+                          children: [
+                            Text(
+                              'Hora:',
+                              style: Theme.of(context).textTheme.headline3,
+                            ),
+                            Text(" "),
+                            Text(
+                              '${widget.fecha}'.split(' ')[1],
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                              fontWeight: FontWeight.bold, 
+                              color: Colors.white, 
+                              fontSize: 15,
+                              ),
+                                textAlign: TextAlign.center,
+                            )
+                          ],
+                        )
                         ]),
                         
                       ],

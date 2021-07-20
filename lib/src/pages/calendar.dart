@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:chem_organizer/src/models/event.dart';
 import 'package:chem_organizer/src/pages/edit_event.dart';
 import 'package:chem_organizer/src/provider/events_controller.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,6 @@ import 'info_event.dart';
 
 class CalendarPage extends StatefulWidget {
   final String user;
-
   const CalendarPage({Key? key, required this.user});
 
   @override
@@ -21,7 +21,7 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage> {
   final String user;
   String nombre = "";
-  String fecha = "";
+  DateTime fecha = DateTime.now();
   String categoria = "";
   int tiempoNotificacion = 10;
   String idCategoria = "todos";
@@ -155,19 +155,18 @@ class _CalendarPageState extends State<CalendarPage> {
                                   color: Color.fromRGBO(238, 211, 110, 0.7),
                                 ),
                                 onPressed: () {
+                                  
                                   nombre = value[index].name;
-                                  fecha =  eventsController.getDateFromDateTime(value[index].date);
+                                  fecha =  value[index].date;
                                   tiempoNotificacion = value[index].timeNotification;
                                   idCategoria = value[index].category.toString();
-                                  print(idCategoria);
+                                  print(fecha);
 
                                   categoriesController.getCategoriaSelected(idCategoria).then((value) => {
                                     if(value == null){
                                       categoria = "Ninguno",
                                     }
                                     else{categoria = value},
-                                    print("CATEGORIA:"),
-                                    print(categoria),
                                     Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -190,15 +189,34 @@ class _CalendarPageState extends State<CalendarPage> {
                                   color: Color.fromRGBO(238, 211, 110, 0.7),
                                 ),
                                 onPressed: () {
-                                  Navigator.push(
+                                  
+                                  nombre = value[index].name;
+                                  fecha =  value[index].date;
+                                  tiempoNotificacion = value[index].timeNotification;
+                                  idCategoria = value[index].category.toString();
+                                  print(fecha);
+
+                                  categoriesController.getCategoriaSelected(idCategoria).then((value) => {
+                                    if(value == null){
+                                      categoria = "Ninguno",
+                                    }
+                                    else{categoria = value},
+                                    Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => EditEvent(
                                               user: this.user,
-                                    )),
-                                  );
+                                              nombre: this.nombre,
+                                              categoria: this.categoria,
+                                              tiempoNotificacion: this.tiempoNotificacion,
+                                              fecha: this.fecha,
+                                            )),
+                                  )
+                                  });
+                                  
+
                                 },
-                              )
+                              ),
                           ]
 
                         )

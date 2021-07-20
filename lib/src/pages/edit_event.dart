@@ -1,4 +1,5 @@
 import 'package:chem_organizer/src/models/categoryEvent.dart';
+import 'package:chem_organizer/src/models/event.dart';
 import 'package:chem_organizer/src/pages/edit_category.dart';
 import 'package:chem_organizer/src/pages/main_view.dart';
 import 'package:chem_organizer/src/pages/new_category.dart';
@@ -11,7 +12,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class EditEvent extends StatefulWidget {
   final String user;
-  const EditEvent({Key? key, required this.user}) : super(key: key);
+  final String nombre;
+  final String categoria;
+  final int tiempoNotificacion;
+  final DateTime fecha;  
+  const EditEvent({Key? key, required this.user, required this.nombre, required this.categoria, required this.tiempoNotificacion, required this.fecha}) : super(key: key);
 
   @override
   _EditEventState createState() => _EditEventState(this.user);
@@ -34,6 +39,10 @@ class _EditEventState extends State<EditEvent> {
   @override
   void initState() {
     categoriesController = new CategoriesController(this.user);
+    nameController.text = widget.nombre;
+    _date = widget.fecha;
+    _selectedTimeNotification = widget.tiempoNotificacion;
+    _selectedCategory = widget.categoria;
   }
 
   void _selectTime() async {
@@ -63,7 +72,7 @@ class _EditEventState extends State<EditEvent> {
     }
   }
 
-  addEvent() {
+  editEvent() {
     DateTime fecha = new DateTime(
         _date.year, _date.month, _date.day, _time.hour, _time.minute);
     FirebaseFirestore.instance
@@ -201,7 +210,7 @@ class _EditEventState extends State<EditEvent> {
                                 _selectTime();
                               },
                               child: new Text(
-                                "${_time.format(context)}",
+                                "${_date.toLocal()}".split(' ')[1],
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                             )
@@ -256,8 +265,7 @@ class _EditEventState extends State<EditEvent> {
                                   },
                                   value: _selectedCategory,
                                   isExpanded: false,
-                                  hint: Text("Selecionar Categoria",
-                                      style: TextStyle(color: Colors.white60)),
+                                  hint: Text(widget.categoria, style: TextStyle(color: Colors.white60)),
                                 );
                                 return dropdownButton;
                               }
@@ -339,7 +347,7 @@ class _EditEventState extends State<EditEvent> {
                               if (_selectedCategory == null) {
                                 showToast();
                               } else {
-                                addEvent();
+                                editEvent();
                               }
                             }
                           },
