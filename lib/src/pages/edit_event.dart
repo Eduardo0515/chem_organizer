@@ -11,12 +11,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class EditEvent extends StatefulWidget {
+  final String id;
   final String user;
   final String nombre;
   final String categoria;
   final int tiempoNotificacion;
-  final DateTime fecha;  
-  const EditEvent({Key? key, required this.user, required this.nombre, required this.categoria, required this.tiempoNotificacion, required this.fecha}) : super(key: key);
+  final DateTime fecha;
+  const EditEvent(
+      {Key? key,
+      required this.user,
+      required this.nombre,
+      required this.categoria,
+      required this.tiempoNotificacion,
+      required this.fecha,
+      required this.id})
+      : super(key: key);
 
   @override
   _EditEventState createState() => _EditEventState(this.user);
@@ -30,7 +39,7 @@ class _EditEventState extends State<EditEvent> {
 
   TextEditingController nameController = TextEditingController();
   DateTime _date = DateTime.now();
-  TimeOfDay _time = TimeOfDay.now();
+  late TimeOfDay _time;
   var _selectedCategory;
   int _selectedTimeNotification = 10;
 
@@ -43,6 +52,7 @@ class _EditEventState extends State<EditEvent> {
     _date = widget.fecha;
     _selectedTimeNotification = widget.tiempoNotificacion;
     _selectedCategory = widget.categoria;
+    _time = TimeOfDay.fromDateTime(_date);
   }
 
   void _selectTime() async {
@@ -79,7 +89,8 @@ class _EditEventState extends State<EditEvent> {
         .collection('usuarios')
         .doc(this.user)
         .collection('eventos')
-        .add({
+        .doc(widget.id)
+        .update({
           'nombre': nameController.text,
           'fecha': fecha,
           'categoria': _selectedCategory,
@@ -210,7 +221,7 @@ class _EditEventState extends State<EditEvent> {
                                 _selectTime();
                               },
                               child: new Text(
-                                "${_date.toLocal()}".split(' ')[1],
+                                "${_time.format(context)}",
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                             )
@@ -265,7 +276,8 @@ class _EditEventState extends State<EditEvent> {
                                   },
                                   value: _selectedCategory,
                                   isExpanded: false,
-                                  hint: Text(widget.categoria, style: TextStyle(color: Colors.white60)),
+                                  hint: Text(widget.categoria,
+                                      style: TextStyle(color: Colors.white60)),
                                 );
                                 return dropdownButton;
                               }

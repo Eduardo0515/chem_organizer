@@ -25,7 +25,8 @@ class _CalendarPageState extends State<CalendarPage> {
   String categoria = "";
   int tiempoNotificacion = 10;
   String idCategoria = "todos";
-  late CategoriesController categoriesController = new CategoriesController(user);
+  late CategoriesController categoriesController =
+      new CategoriesController(user);
 
   final eventsController = EventsController();
   late final ValueNotifier<List<dynamic>> _selectedEvents;
@@ -129,58 +130,65 @@ class _CalendarPageState extends State<CalendarPage> {
                   itemBuilder: (context, index) {
                     return Container(
                       child: Card(
-                        child: Row(children: [
-                        Expanded(
-                        child: ListTile(
-                          contentPadding: EdgeInsets.fromLTRB(45, 0, 55, 0),
-                          onTap: () => print('${value[index].id}'),
-                          title: Text(
-                            '${value[index].name}',
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                          subtitle: Text(
-                            eventsController
-                                .getDateFromDateTime(value[index].date),
-                            style:
-                                TextStyle(height: 1.5, color: Colors.white70),
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                        ),
-                        Column(
-                          children: <Widget>[
-                            IconButton(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ListTile(
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(45, 0, 55, 0),
+                                onTap: () => print('${value[index].id}'),
+                                title: Text(
+                                  '${value[index].name}',
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                                subtitle: Text(
+                                  eventsController
+                                      .getDateFromDateTime(value[index].date),
+                                  style: TextStyle(
+                                      height: 1.5, color: Colors.white70),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ),
+                            Column(children: <Widget>[
+                              IconButton(
                                 icon: const Icon(
                                   Icons.remove_red_eye,
                                   color: Color.fromRGBO(238, 211, 110, 0.7),
                                 ),
                                 onPressed: () {
-                                  
                                   nombre = value[index].name;
-                                  fecha =  value[index].date;
-                                  tiempoNotificacion = value[index].timeNotification;
-                                  idCategoria = value[index].category.toString();
+                                  fecha = value[index].date;
+                                  tiempoNotificacion =
+                                      value[index].timeNotification;
+                                  idCategoria =
+                                      value[index].category.toString();
                                   print(fecha);
 
-                                  categoriesController.getCategoriaSelected(idCategoria).then((value) => {
-                                    if(value == null){
-                                      categoria = "Ninguno",
-                                    }
-                                    else{categoria = value},
-                                    Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => InfoEvent(
-                                              user: this.user,
-                                              nombre: this.nombre,
-                                              categoria: this.categoria,
-                                              tiempoNotificacion: this.tiempoNotificacion,
-                                              fecha: this.fecha,
-                                            )),
-                                  )
-                                  });
-                                  
-
+                                  categoriesController
+                                      .getCategoriaSelected(idCategoria)
+                                      .then((value) => {
+                                            if (value == null)
+                                              {
+                                                categoria = "Ninguno",
+                                              }
+                                            else
+                                              {categoria = value},
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder:
+                                                      (context) => InfoEvent(
+                                                            user: this.user,
+                                                            nombre: this.nombre,
+                                                            categoria:
+                                                                this.categoria,
+                                                            tiempoNotificacion:
+                                                                this.tiempoNotificacion,
+                                                            fecha: this.fecha,
+                                                          )),
+                                            )
+                                          });
                                 },
                               ),
                               IconButton(
@@ -189,39 +197,45 @@ class _CalendarPageState extends State<CalendarPage> {
                                   color: Color.fromRGBO(238, 211, 110, 0.7),
                                 ),
                                 onPressed: () {
-                                  
+                                  String id = value[index].id;
                                   nombre = value[index].name;
-                                  fecha =  value[index].date;
-                                  tiempoNotificacion = value[index].timeNotification;
-                                  idCategoria = value[index].category.toString();
+                                  fecha = value[index].date;
+                                  tiempoNotificacion =
+                                      value[index].timeNotification;
+                                  idCategoria =
+                                      value[index].category.toString();
                                   print(fecha);
 
-                                  categoriesController.getCategoriaSelected(idCategoria).then((value) => {
-                                    if(value == null){
-                                      categoria = "Ninguno",
-                                    }
-                                    else{categoria = value},
-                                    Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => EditEvent(
-                                              user: this.user,
-                                              nombre: this.nombre,
-                                              categoria: this.categoria,
-                                              tiempoNotificacion: this.tiempoNotificacion,
-                                              fecha: this.fecha,
-                                            )),
-                                  )
-                                  });
-                                  
-
+                                  categoriesController
+                                      .getCategoriaSelected(idCategoria)
+                                      .then((value) => {
+                                            if (value == null)
+                                              {
+                                                categoria = "Ninguno",
+                                              }
+                                            else
+                                              {categoria = value},
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder:
+                                                      (context) => EditEvent(
+                                                            id: id,
+                                                            user: this.user,
+                                                            nombre: this.nombre,
+                                                            categoria:
+                                                                this.categoria,
+                                                            tiempoNotificacion:
+                                                                this.tiempoNotificacion,
+                                                            fecha: this.fecha,
+                                                          )),
+                                            )
+                                          });
                                 },
                               ),
-                          ]
-
-                        )
-                        ],
-                      ),
+                            ])
+                          ],
+                        ),
                       ),
                     );
                   },
