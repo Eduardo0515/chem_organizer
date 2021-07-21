@@ -4,27 +4,33 @@ import 'package:chem_organizer/src/pages/edit_category.dart';
 import 'package:chem_organizer/src/pages/main_view.dart';
 import 'package:chem_organizer/src/pages/new_category.dart';
 import 'package:chem_organizer/src/provider/categories_controller.dart';
+import 'package:chem_organizer/src/services/push_notifications_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:timezone/timezone.dart' as tz;
+
 
 class EditEvent extends StatefulWidget {
   final String id;
   final String user;
   final String nombre;
   final String categoria;
+  final String nameCategoria;
   final int tiempoNotificacion;
   final DateTime fecha;
   const EditEvent(
       {Key? key,
+      required this.id,
       required this.user,
       required this.nombre,
       required this.categoria,
+      required this.nameCategoria,
       required this.tiempoNotificacion,
-      required this.fecha,
-      required this.id})
+      required this.fecha})
       : super(key: key);
 
   @override
@@ -34,6 +40,7 @@ class EditEvent extends StatefulWidget {
 class _EditEventState extends State<EditEvent> {
   final String user;
   final _formKey = GlobalKey<FormState>();
+  String imprimir = "Evento editado";
 
   late CategoriesController categoriesController;
 
@@ -42,6 +49,7 @@ class _EditEventState extends State<EditEvent> {
   late TimeOfDay _time;
   var _selectedCategory;
   int _selectedTimeNotification = 10;
+  dynamic data;
 
   _EditEventState(this.user);
 
@@ -51,7 +59,7 @@ class _EditEventState extends State<EditEvent> {
     nameController.text = widget.nombre;
     _date = widget.fecha;
     _selectedTimeNotification = widget.tiempoNotificacion;
-    //_selectedCategory = widget.categoria;
+    _selectedCategory = widget.categoria;
     _time = TimeOfDay.fromDateTime(_date);
   }
 
@@ -85,7 +93,12 @@ class _EditEventState extends State<EditEvent> {
   editEvent() {
     DateTime fecha = new DateTime(
         _date.year, _date.month, _date.day, _time.hour, _time.minute);
-    FirebaseFirestore.instance
+    int id = Timestamp.now().seconds;
+    DateTime rememberDate = new DateTime(_date.year, _date.month, _date.day,
+        _time.hour, _time.minute - _selectedTimeNotification);
+    dynamic valor;
+    String name = nameController.text;
+    data = FirebaseFirestore.instance
         .collection('usuarios')
         .doc(this.user)
         .collection('eventos')
@@ -97,8 +110,28 @@ class _EditEventState extends State<EditEvent> {
           'tiempoNotificacion': _selectedTimeNotification
         })
         .then((value) => {
+              print("SOY IDDDDDD" + id.toString()),
+
+              print("SOY IDDDDDD222222--" + (id - 1000000000).toString()),
+              print(
+                  "SOY TIEMPO BEFORE--" + _selectedTimeNotification.toString()),
+              print("SOY FECHAAAA--" + fecha.toString()),
+              print("SOY FECHAAAA2--" + rememberDate.toString()),
+              //Mostrar notificacion
+              valor = displayNotification(
+                  id, nameController.text, "Tienes una tarea pendiente", fecha),
+              if (valor != null)
+                {
+                  displayNotification(
+                      (id - 100000000),
+                      "Recordatorio",
+                      "Tienes que $name en $_selectedTimeNotification minutos",
+                      rememberDate),
+                }
+              else
+                {imprimir = "Recordatorio añadido"},
               Fluttertoast.showToast(
-                  msg: 'Nuevo Evento Añadido',
+                  msg: 'Evento Editado',
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                   backgroundColor: Colors.green.shade400,
@@ -113,7 +146,7 @@ class _EditEventState extends State<EditEvent> {
             })
         .catchError((error) => {
               Fluttertoast.showToast(
-                  msg: 'Hubo un error al añadir el evento',
+                  msg: 'Hubo un error al editar el evento',
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                   backgroundColor: Colors.red.shade300,
@@ -230,7 +263,7 @@ class _EditEventState extends State<EditEvent> {
                       ],
                     ),
                     SizedBox(
-                      height: 40,
+                      height: 30,
                     ),
                     Text(
                       'Categoria:',
@@ -255,7 +288,7 @@ class _EditEventState extends State<EditEvent> {
                                     'NINGUNO',
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  value: "0001",
+                                  value: _selectedCategory,
                                 ));
                                 for (int i = 0;
                                     i < snapshot.data!.docs.length;
@@ -278,12 +311,12 @@ class _EditEventState extends State<EditEvent> {
                                       Color.fromRGBO(133, 45, 145, 1.0),
                                   onChanged: (newValue) {
                                     setState(() {
-                                      _selectedCategory = newValue;
+                                      _selectedCategory = newValue.toString();
                                     });
                                   },
-                                  value: _selectedCategory,
+                                  //value: _selectedCategory,
                                   isExpanded: false,
-                                  hint: Text(widget.categoria,
+                                  hint: Text(widget.nameCategoria,
                                       style: TextStyle(color: Colors.white60)),
                                 );
                                 return dropdownButton;
@@ -363,11 +396,8 @@ class _EditEventState extends State<EditEvent> {
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               print("validacion exitosa");
-                              if (_selectedCategory == null) {
-                                showToast();
-                              } else {
-                                editEvent();
-                              }
+                              print(_selectedCategory);
+                              editEvent();
                             }
                           },
                           child: Text(
@@ -408,6 +438,30 @@ class _EditEventState extends State<EditEvent> {
       return SizedBox(
         height: 10,
       );
+    }
+  }
+
+  Future<void> displayNotification(
+      int id, String title, String body, DateTime dateTime) async {
+    //isGreaterThanOrEqualTo
+    if (tz.TZDateTime.now(tz.local)
+        .isAfter(tz.TZDateTime.from(dateTime, tz.local))) {
+      print("isAfter--------------------------------");
+      imprimir = "Recordatorio añadido";
+      return null;
+    } else {
+      print("isBefore--------------------------------");
+      notificationsPlugin.zonedSchedule(
+          id,
+          title,
+          body,
+          tz.TZDateTime.from(dateTime, tz.local),
+          NotificationDetails(
+              android: AndroidNotificationDetails(
+                  'channelId', 'channelName', 'channelDescription')),
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          androidAllowWhileIdle: true);
     }
   }
 }

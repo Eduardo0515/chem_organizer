@@ -24,11 +24,15 @@ class InfoEvent extends StatefulWidget {
 class _InfoEventState extends State<InfoEvent> {
   final String user;
   final _formKey = GlobalKey<FormState>();
+  DateTime _date = DateTime.now();
+  late TimeOfDay _time;
 
   _InfoEventState(this.user);
 
   @override
   void initState() {
+    _date = widget.fecha;
+    _time = TimeOfDay.fromDateTime(_date);
   }
 
   @override
@@ -126,8 +130,7 @@ class _InfoEventState extends State<InfoEvent> {
                               style: Theme.of(context).textTheme.headline3,
                             ),
                             Text(" "),
-                            Text(
-                              '${widget.fecha}'.split(' ')[1],
+                            Text("${_time.format(context)}",
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                               fontWeight: FontWeight.bold, 
@@ -135,7 +138,8 @@ class _InfoEventState extends State<InfoEvent> {
                               fontSize: 15,
                               ),
                                 textAlign: TextAlign.center,
-                            )
+                            ),
+                            
                           ],
                         )
                         ]),

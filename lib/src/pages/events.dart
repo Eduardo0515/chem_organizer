@@ -242,6 +242,7 @@ class _EventsState extends State<Events> {
                             color: Colors.white,
                           )),
                       child: Card(
+                        margin: EdgeInsets.all(5),
                         child: Row(children: [
                           Expanded(
                             child: ListTile(
@@ -257,6 +258,7 @@ class _EventsState extends State<Events> {
                             ),
                           ),
                           Container(
+                            margin: EdgeInsets.all(15),
                             //padding: EdgeInsets.all(15.0),
                             child: buildCategoria(doc.get('categoria')),
                           ),

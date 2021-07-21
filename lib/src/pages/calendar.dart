@@ -22,7 +22,8 @@ class _CalendarPageState extends State<CalendarPage> {
   final String user;
   String nombre = "";
   DateTime fecha = DateTime.now();
-  String categoria = "";
+  String categoria = "ESCUELA";
+  String nameCategoria = "SOCIAL";
   int tiempoNotificacion = 10;
   String idCategoria = "todos";
   late CategoriesController categoriesController =
@@ -163,7 +164,8 @@ class _CalendarPageState extends State<CalendarPage> {
                                       value[index].timeNotification;
                                   idCategoria =
                                       value[index].category.toString();
-                                  print(fecha);
+                                  //print(idCategoria);
+                                  //print(fecha);
 
                                   categoriesController
                                       .getCategoriaSelected(idCategoria)
@@ -174,6 +176,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                               }
                                             else
                                               {categoria = value},
+                                              print(categoria),
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -204,7 +207,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                       value[index].timeNotification;
                                   idCategoria =
                                       value[index].category.toString();
-                                  print(fecha);
+                                  //print(fecha);
 
                                   categoriesController
                                       .getCategoriaSelected(idCategoria)
@@ -215,6 +218,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                               }
                                             else
                                               {categoria = value},
+                                            print(categoria),
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -223,10 +227,9 @@ class _CalendarPageState extends State<CalendarPage> {
                                                             id: id,
                                                             user: this.user,
                                                             nombre: this.nombre,
-                                                            categoria:
-                                                                this.categoria,
-                                                            tiempoNotificacion:
-                                                                this.tiempoNotificacion,
+                                                            categoria: this.idCategoria,
+                                                            nameCategoria: this.categoria,
+                                                            tiempoNotificacion: this.tiempoNotificacion,
                                                             fecha: this.fecha,
                                                           )),
                                             )

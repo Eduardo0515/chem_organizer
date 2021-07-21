@@ -267,7 +267,7 @@ class _NewEventState extends State<NewEvent> {
                                     'NINGUNO',
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  value: "0001",
+                                  value: '0001',
                                 ));
                                 for (int i = 0;
                                     i < snapshot.data!.docs.length;
