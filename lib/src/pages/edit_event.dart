@@ -51,7 +51,7 @@ class _EditEventState extends State<EditEvent> {
     nameController.text = widget.nombre;
     _date = widget.fecha;
     _selectedTimeNotification = widget.tiempoNotificacion;
-    _selectedCategory = widget.categoria;
+    //_selectedCategory = widget.categoria;
     _time = TimeOfDay.fromDateTime(_date);
   }
 
@@ -250,6 +250,13 @@ class _EditEventState extends State<EditEvent> {
                                 return Text("Loading.....");
                               else {
                                 List<DropdownMenuItem<String>> items = [];
+                                items.add(DropdownMenuItem(
+                                  child: Text(
+                                    'NINGUNO',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  value: "0001",
+                                ));
                                 for (int i = 0;
                                     i < snapshot.data!.docs.length;
                                     i++) {
